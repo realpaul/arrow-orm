@@ -13,7 +13,7 @@ describe('models',function(){
 			fields: {
 				name: {
 					type: String,
-					default: 'Jeff',
+					default: 'Jeff'
 				}
 			},
 			connector: Connector
@@ -23,6 +23,66 @@ describe('models',function(){
 			should(err).not.be.ok;
 			should(user).be.an.object;
 			should(user.name).be.equal('Jeff');
+			callback();
+		});
+
+	});
+
+	it('should be able to validate field with regular expression',function(callback){
+
+		var Connector = new orm.MemoryConnector();
+
+		var User = orm.Model.define('user',{
+			fields: {
+				age: {
+					type: Number,
+					validator: /^[0-9]$/
+				}
+			},
+			connector: Connector
+		});
+
+		User.create({age:9},function(err,user){
+			should(err).not.be.ok;
+			should(user).be.an.object;
+			should(user.age).be.equal(9);
+
+			(function(){
+				user.age = 12;
+			}).should.throw('field "age" failed validation using expression "/^[0-9]$/" and value: 12');
+
+			callback();
+		});
+
+	});
+
+	it('should be able to validate field with function',function(callback){
+
+		var Connector = new orm.MemoryConnector();
+
+		var User = orm.Model.define('user',{
+			fields: {
+				age: {
+					type: Number,
+					validator: function(value) {
+						if (value !== 9) {
+							return 'Number must be 9';
+						}
+					}
+				}
+			},
+			connector: Connector
+		});
+
+		User.create({age:9},function(err,user){
+			should(err).not.be.ok;
+			should(user).be.an.object;
+			should(user.age).be.equal(9);
+
+			(function(){
+				user.age = 12;
+			}).should.throw('Number must be 9');
+
 			callback();
 		});
 
