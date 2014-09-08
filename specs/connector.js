@@ -122,6 +122,7 @@ describe('connectors',function(){
 		should(UserPromise).be.an.object;
 		should(UserPromise.connector).be.an.object;
 		should(UserPromise.connector).not.be.equal(connector);
+		should(UserPromise.login).should.be.a.function;
 
 		UserPromise.findOne(1, function(err,user){
 			should(err).not.be.ok;

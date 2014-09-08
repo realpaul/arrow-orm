@@ -1,6 +1,6 @@
 {
   "name": "mobware2-orm",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Mobware2 ORM",
   "main": "index.js",
   "license": "Apache-2",
