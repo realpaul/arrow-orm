@@ -1,6 +1,7 @@
 var should = require('should'),
 	async = require('async'),
 	util = require('util'),
+	_  = require('lodash'),
 	orm = require('../');
 
 describe('models',function(){
@@ -223,7 +224,7 @@ describe('models',function(){
 		tasks.push(function(next){
 			User.create({name:'jeff'},function(err,u){
 				user = u;
-				should(err).not.be.ok;
+				should(err).be.not.ok;
 				should(user).be.an.object;
 				should(user.name).be.equal('jeff');
 				should(user.getPrimaryKey()).be.equal(1);
@@ -366,7 +367,7 @@ describe('models',function(){
 			should(err).not.be.ok;
 			should(user).be.an.object;
 			// serialized model instances should only serialize their values
-			should(JSON.stringify(user)).be.equal(JSON.stringify({name:'Jeff'}));
+			should(JSON.stringify(user)).be.equal(JSON.stringify({id:user.getPrimaryKey(),name:'Jeff'}));
 			callback();
 		});
 
@@ -455,11 +456,14 @@ describe('models',function(){
 			should(collection).be.an.object;
 			should(collection.length).be.equal(4);
 
+			var id = collection.first().getPrimaryKey();
 			var json = JSON.stringify(collection.first());
-			should(json).be.equal(JSON.stringify(users[0]));
+			var _user = _.merge({id:id},users[0]);
+			should(json).be.equal(JSON.stringify(_user));
 
 			json = JSON.stringify(collection.at(0));
-			should(json).be.equal(JSON.stringify([users[0]]));
+			_user = _.merge({id:id},users[0]);
+			should(json).be.equal(JSON.stringify([_user]));
 
 			var inspect = util.inspect(collection.first());
 			should(inspect).be.equal(util.inspect(users[0]));
@@ -580,6 +584,32 @@ describe('models',function(){
 				callback();
 			});
 
+		});
+
+	});
+
+	it('should not error on setting id',function(callback){
+
+		var Connector = new orm.MemoryConnector();
+
+		var User = orm.Model.define('user',{
+			fields: {
+				name: {
+					type: String,
+					required: false
+				}
+			},
+			connector: Connector
+		});
+
+		User.create({name:'Jeff'},function(err,user){
+			should(err).not.be.ok;
+			should(user).be.an.object;
+
+			// should not error
+			user.id = 123;
+
+			callback();
 		});
 
 	});
