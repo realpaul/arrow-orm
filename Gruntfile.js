@@ -54,12 +54,9 @@ module.exports = function(grunt) {
 			}
 		}
 
-		// ensure variables are loaded
-		['USERNAME','PASSWORD'].forEach(function(o) {
-			if (!process.env[o]) {
-				grunt.fail.fatal('$' + o + ' not set. See README.md.');
-			}
-		});
+		if (process.env.TRAVIS && !process.env.npm_config__auth) {
+			process.env.npm_config__auth = process.env.NPM_AUTH_KEY;
+		}
 	});
 
 	// run test coverage
