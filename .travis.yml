@@ -8,5 +8,5 @@ before_install:
 - npm install npm -g
 env:
   global:
-  - secure: C7tci1ItBzEUztSBMjpweYPEqll2HeZnRMwLwpTA6O/Ez1P/T3IWgVwdds/z7sJi/b1yoDivzJvduy3njQSo+dcnkbg/1dkAmOYtTwYaDjym1HUABZVKAP9czvXItU5QIXws4NvyC5/5UoQ9NvPlxCliwitEC8uQONPT1Fu+k8o=
-  - secure: Ma+JUWnY0l0qJ7LK9jiHRfi6SheSNIEfhBU6Yv3nz2veqNkPsltXehgrHWWxQhf1OcmV7InW82Qq9Ge2OBluDPIl6KPQcN4kfnc5pu51uCnw5RThVJ152bJXRTPFHfLiO4/lfPIqv6YcRU/f9IScYMTOsOG4bXZWjWnSIlU6vvY=
+  - secure: aFmbm3URr/bSNfgQX4dxikZCXOzjGORcyB1qwwSFAOIpzi0gnrarsQjjs+q3m2Sg+wIhjKjL5V1fur/bdUU8bqMdQjGoTNGTyrLQpepvUTIUJ9V7Sg8CYZM2uO0pr1UXQhJE261lMhMgj1jxJfvbWLcLrcy3lmb/LyY1VJtAVhg=
+  - secure: PS8bDHHq+k2sGNboOFHFDu4SA5tp+pzIlAUUChwBt3xLa4UFlKU86Ba2V4thaqWYaSTFtDmXNrchCT/w0fcbVhjeaRm4Z+G6VvA7cfkLyRaNsyOEjuPS8d2xkUtpMXEVJpP1Rl3eyCKzzYUe0PBSm7GPP9b2qFM06ni/y1m/DpQ=

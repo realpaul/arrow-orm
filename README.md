@@ -1,4 +1,4 @@
-# API Builder ORM
+# API Builder ORM [![Build Status](https://magnum.travis-ci.com/appcelerator/api-orm.svg?token=xjwxUDk3aUJaLhguTqyB&branch=master)](https://magnum.travis-ci.com/appcelerator/api-orm)
 
 Object relational mapping (ORM) framework for [API Builder](https://github.com/appcelerator/api).
 
