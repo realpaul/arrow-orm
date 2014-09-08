@@ -1,31 +1,31 @@
 {
-  "name": "mobware2-orm",
-  "version": "1.0.2",
-  "description": "Mobware2 ORM",
-  "main": "index.js",
-  "license": "Apache-2",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/appcelerator/mobware2-mvc"
-  },
-  "scripts": {
-    "test": "grunt"
-  },
-  "author": "Jeff Haynie",
-  "dependencies": {
-    "async": "^0.9.0",
-    "chalk": "^0.5.1",
-    "debug": "^2.0.0",
-    "lodash": "^2.4.1",
-    "should": "^4.0.4"
-  },
-  "devDependencies": {
-    "grunt": "^0.4.5",
-    "grunt-contrib-clean": "^0.6.0",
-    "grunt-contrib-jshint": "^0.10.0",
-    "grunt-env": "^0.4.1",
-    "grunt-mocha-test": "^0.11.0",
-    "istanbul": "^0.3.2",
-    "mocha": "^1.21.4"
-  }
+	"name": "api-orm",
+	"version": "1.0.2",
+	"description": "API Builder ORM",
+	"main": "index.js",
+	"license": "Apache-2",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/appcelerator/api-mvc"
+	},
+	"scripts": {
+		"test": "grunt"
+	},
+	"author": "Jeff Haynie",
+	"dependencies": {
+		"async": "^0.9.0",
+		"chalk": "^0.5.1",
+		"debug": "^2.0.0",
+		"lodash": "^2.4.1",
+		"should": "^4.0.4"
+	},
+	"devDependencies": {
+		"grunt": "^0.4.5",
+		"grunt-contrib-clean": "^0.6.0",
+		"grunt-contrib-jshint": "^0.10.0",
+		"grunt-env": "^0.4.1",
+		"grunt-mocha-test": "^0.11.0",
+		"istanbul": "^0.3.2",
+		"mocha": "^1.21.4"
+	}
 }

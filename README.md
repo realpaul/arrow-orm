@@ -1,7 +1,6 @@
 # APIBuilder ORM
 
-Object relational mapping (ORM) framework for APIBuilder.
-
+Object relational mapping (ORM) framework for [API Builder](https://github.com/appcelerator/api).
 
 ## Main Components
 

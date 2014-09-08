@@ -43,8 +43,8 @@ module.exports = function(grunt) {
 		process.env.TEST = '1';
 
 		// create list of search paths
-		var configs = [path.resolve('.mobware')];
-		if (HOME) { configs.push(path.join(HOME, '.mobware')); }
+		var configs = [path.resolve('.apibuilder')];
+		if (HOME) { configs.push(path.join(HOME, '.apibuilder')); }
 
 		for (var i = 0; i < configs.length; i++) {
 			var config = configs[i];
