@@ -4,7 +4,6 @@
   "description": "Mobware2 ORM",
   "main": "index.js",
   "license": "Apache-2",
-  "private": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/appcelerator/mobware2-mvc"
