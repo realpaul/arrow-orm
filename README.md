@@ -1,4 +1,4 @@
-# APIBuilder ORM
+# API Builder ORM
 
 Object relational mapping (ORM) framework for [API Builder](https://github.com/appcelerator/api).
 
