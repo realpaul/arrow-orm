@@ -650,6 +650,57 @@ describe('models',function(){
 
 	});
 
+	it('should skip not found on instance create',function(){
+
+		var Connector = new orm.MemoryConnector();
+
+		var User = orm.Model.define('user',{
+			fields: {
+				name: {
+					type: String,
+					required: false
+				}
+			},
+			connector: Connector
+		});
+
+		var model;
+
+		(function(){
+			model = User.instance({foo:'bar'},true);
+		}).should.not.throw;
+
+		should(model).be.an.object;
+		should(model).not.have.property('foo');
+
+	});
+
+	describe('#connector', function(){
+
+		it('should be able to add to collection', function(){
+			var Connector = new orm.MemoryConnector();
+			var User = orm.Model.define('user',{
+				fields: {
+					name: {
+						type: String,
+						required: false
+					}
+				},
+				connector: Connector
+			});
+			var instance = User.instance({name:"jeff"});
+			var collection = new orm.Collection(User,[instance]);
+			should(collection).be.an.object;
+			should(collection.length).be.equal(1);
+			collection.add(User.instance({name:"nolan"}));
+			should(collection.length).be.equal(2);
+			collection.add([
+				User.instance({name:"rick"}),
+				User.instance({name:"tony"})
+			]);
+			should(collection.length).be.equal(4);
+		});
+	});
 
 	describe('#metadata', function(){
 

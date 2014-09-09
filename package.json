@@ -1,12 +1,12 @@
 {
 	"name": "api-orm",
-	"version": "1.0.4",
+	"version": "1.0.5",
 	"description": "API Builder ORM",
 	"main": "index.js",
 	"license": "Apache-2",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/appcelerator/api-mvc"
+		"url": "https://github.com/appcelerator/api-orm"
 	},
 	"scripts": {
 		"test": "grunt"
