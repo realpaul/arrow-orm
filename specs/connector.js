@@ -5,11 +5,42 @@ var should = require('should'),
 
 describe('connectors',function(){
 
+	before(function(){
+		orm.Connector.clearConnectors();
+		orm.Connector.removeAllListeners();
+	});
+
+	afterEach(function(){
+		orm.Connector.clearConnectors();
+		orm.Connector.removeAllListeners();
+	});
+
+	it('should be able to register and retrieve connectors',function(){
+		var MyConnector = orm.Connector.extend({});
+
+		should(orm.Connector.getConnectors()).be.an.array;
+		should(orm.Connector.getConnectors()).have.length(0);
+
+		var found;
+
+		orm.Connector.on('register',function(c){
+			found = c;
+		});
+
+		var connector = new MyConnector();
+
+		should(found).be.ok;
+		should(found).equal(connector);
+
+		should(orm.Connector.getConnectors()).have.length(1);
+		should(orm.Connector.getConnectors()[0]).equal(connector);
+	});
+
 	it('should be able to create with defaults',function(){
 
 		var MyConnector = orm.Connector.extend({});
-
 		should(MyConnector).be.an.object;
+
 		var connector = new MyConnector();
 
 		should(connector).be.an.object;

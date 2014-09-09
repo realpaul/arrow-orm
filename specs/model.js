@@ -6,6 +6,42 @@ var should = require('should'),
 
 describe('models',function(){
 
+	before(function(){
+		orm.Model.clearModels();
+		orm.Model.removeAllListeners();
+	});
+
+	afterEach(function(){
+		orm.Model.clearModels();
+		orm.Model.removeAllListeners();
+	});
+
+	it('should be able register and retrieve models',function(){
+		var Connector = new orm.MemoryConnector();
+
+		var found;
+
+		orm.Model.on('register',function(c){
+			found = c;
+		});
+
+		should(orm.Model.getModels()).be.an.array;
+		should(orm.Model.getModels()).have.length(0);
+
+		var User = orm.Model.define('user',{
+			fields: {
+				name: {
+					type: String,
+					default: 'Jeff'
+				}
+			},
+			connector: Connector
+		});
+
+		should(orm.Model.getModels()).have.length(1);
+		should(orm.Model.getModels()[0]).equal(User);
+	});
+
 	it('should be able to create with defaults',function(callback){
 
 		var Connector = new orm.MemoryConnector();
