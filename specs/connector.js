@@ -178,4 +178,175 @@ describe('connectors',function(){
 
 	});
 
+	describe("#lifecycle", function(){
+
+		it("should support no lifecycle methods", function(callback){
+			var MyConnector = orm.Connector.extend({});
+			var connector = new MyConnector();
+			connector.connect(callback);
+		});
+
+		it("should support override of base config with constructor config", function(callback){
+			var MyConnector = orm.Connector.extend({
+				config: {foo:'bar'}
+			});
+			var connector = new MyConnector({
+				foo: 'hello'
+			});
+			connector.connect(function(err){
+				should(err).not.be.ok;
+				should(connector.config).be.an.object;
+				should(connector.config).have.property('foo','hello');
+				callback();
+			});
+		});
+
+		it("should support custom connect", function(callback){
+			var called;
+			var MyConnector = orm.Connector.extend({
+				connect: function(callback) {
+					called = true;
+					callback();
+				}
+			});
+			var connector = new MyConnector();
+			connector.connect(function(err){
+				should(err).be.not.ok;
+				should(called).be.ok;
+				callback();
+			});
+		});
+
+		it("should support only fetchConfig method", function(callback){
+			var MyConnector = orm.Connector.extend({
+				fetchConfig: function(callback) {
+					callback(null, {foo:'bar'});
+				}
+			});
+			var connector = new MyConnector();
+			connector.connect(function(err){
+				should(err).not.be.ok;
+				should(connector.config).be.an.object;
+				should(connector.config).have.property('foo','bar');
+				callback();
+			});
+		});
+
+		it("should support only fetchConfig but constructor should override", function(callback){
+			var MyConnector = orm.Connector.extend({
+				fetchConfig: function(callback) {
+					callback(null, {foo:'bar'});
+				}
+			});
+			var connector = new MyConnector({
+				foo:'hello'
+			});
+			connector.connect(function(err){
+				should(err).not.be.ok;
+				should(connector.config).be.an.object;
+				should(connector.config).have.property('foo','hello');
+				callback();
+			});
+		});
+
+		it("should support only fetchSchema only", function(callback){
+			var MyConnector = orm.Connector.extend({
+				fetchSchema: function(callback) {
+					callback(null, {foo:'bar'});
+				}
+			});
+			var connector = new MyConnector();
+			connector.connect(function(err){
+				should(err).not.be.ok;
+				should(connector.metadata).be.an.object;
+				should(connector.metadata).have.property('schema');
+				should(connector.metadata.schema).have.property('foo','bar');
+				callback();
+			});
+		});
+
+		it("should support only fetchMetadata only", function(callback){
+			var MyConnector = orm.Connector.extend({
+				fetchMetadata: function(callback) {
+					callback(null, {foo:'bar'});
+				}
+			});
+			var connector = new MyConnector();
+			connector.connect(function(err){
+				should(err).not.be.ok;
+				should(connector.metadata).be.an.object;
+				should(connector.metadata).have.property('foo','bar');
+				callback();
+			});
+		});
+
+		it("should support only fetchSchema and fetchMetadata", function(callback){
+			var MyConnector = orm.Connector.extend({
+				fetchSchema: function(callback) {
+					callback(null, {foo:'bar'});
+				},
+				fetchMetadata: function(callback) {
+					callback(null, {foo:'bar'});
+				}
+			});
+			var connector = new MyConnector();
+			connector.connect(function(err){
+				should(err).not.be.ok;
+				should(connector.metadata).be.an.object;
+				should(connector.metadata).have.property('foo','bar');
+				should(connector.metadata.schema).be.an.object;
+				should(connector.metadata.schema).have.property('foo','bar');
+				callback();
+			});
+		});
+
+	});
+
+	describe('#events',function() {
+		it ('should support event emitter events on instance', function(){
+			var MyConnector = orm.Connector.extend({});
+			var connector = new MyConnector();
+			var foo;
+			connector.on('foo',function(value){
+				foo = value;
+			});
+			connector.emit('foo',1);
+			should(foo).be.ok;
+			should(foo).equal(1);
+			connector.removeAllListeners();
+			foo = null;
+			connector.emit('foo',2);
+			should(foo).be.null;
+			foo = null;
+			function listener(value){
+				foo = value;
+			}
+			connector.on('foo',listener);
+			connector.emit('foo',1);
+			should(foo).be.ok;
+			should(foo).equal(1);
+			connector.removeListener('foo',listener);
+			foo = null;
+			connector.emit('foo',2);
+			should(foo).be.null;
+		});
+		it ('should support register event', function(){
+			var foo;
+			function listener(value){
+				foo = value;
+			}
+			orm.Connector.on('register',listener);
+			var MyConnector = orm.Connector.extend({});
+			var connector = new MyConnector();
+			should(foo).be.ok;
+			should(foo).equal(connector);
+			orm.Connector.removeListener('register',listener);
+			orm.Connector.removeAllListeners();
+			foo = null;
+			var MyConnector2 = orm.Connector.extend({});
+			var connector2 = new MyConnector2();
+			should(foo).be.null;
+		});
+	});
+
 });
