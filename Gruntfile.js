@@ -22,7 +22,7 @@ module.exports = function(grunt) {
 			options: {
 				jshintrc: true
 			},
-			src: ['lib/**/*.js', 'specs/**/*.js', '!lib/admin/{jquery,bootstrap}/**/*']
+			src: ['lib/**/*.js', 'specs/**/*.js']
 		},
 		coverage: {
 			src: ['specs/**/*.js']

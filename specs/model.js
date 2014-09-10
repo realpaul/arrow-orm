@@ -722,6 +722,35 @@ describe('models',function(){
 
 	});
 
+	it('should be able to set a custom model function', function(callback){
+		var Connector = new orm.MemoryConnector();
+
+		var User = orm.Model.define('user',{
+			fields: {
+				name: {
+					type: String,
+					required: true,
+					default: 'jeff'
+				}
+			},
+			connector: Connector,
+
+			// implement a function that will be on the Model and
+			// available to all instances
+			getProperName: function() {
+				return this.name.charAt(0).toUpperCase() + this.name.substring(1);
+			}
+		});
+
+		User.create(function(err,user){
+			should(err).not.be.ok;
+			should(user).be.an.object;
+			should(user.getProperName()).be.equal('Jeff');
+			callback();
+		});
+
+	});
+
 	describe('#connector', function(){
 
 		it('should be able to add to collection', function(){
