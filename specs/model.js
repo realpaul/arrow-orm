@@ -42,6 +42,53 @@ describe('models',function(){
 		should(orm.Model.getModels()[0]).equal(User);
 	});
 
+	it('should be able get model keys',function(){
+		var Connector = new orm.MemoryConnector();
+		var User = orm.Model.define('user',{
+			fields: {
+				name: {
+					type: String,
+					default: 'Jeff'
+				},
+				age: {
+					type: Number,
+					default: 10
+				}
+			},
+			connector: Connector
+		});
+
+		should(User.keys()).be.an.array;
+		should(User.keys()).eql(['name','age']);
+	});
+
+	it('should be able get instance values',function(callback){
+		var Connector = new orm.MemoryConnector();
+		var User = orm.Model.define('user',{
+			fields: {
+				name: {
+					type: String,
+					default: 'Jeff'
+				},
+				age: {
+					type: Number,
+					default: 10
+				}
+			},
+			connector: Connector
+		});
+
+		User.create(function(err,instance){
+			should(err).be.not.ok;
+			should(instance).be.an.object;
+			should(instance.keys()).be.an.array;
+			should(instance.keys()).eql(['name','age']);
+			should(instance.values()).eql({name:'Jeff',age:10});
+			callback();
+		});
+
+	});
+
 	it('should be able to create with defaults',function(callback){
 
 		var Connector = new orm.MemoryConnector();
