@@ -816,6 +816,35 @@ describe('models',function(){
 		});
 	});
 
+	describe('#serialization',function(){
+
+		it.only('should serialize all fields',function(callback){
+			var Connector = new orm.MemoryConnector();
+
+			var User = orm.Model.define('user',{
+				fields: {
+					name: {
+						type: String,
+						required: false
+					},
+					age: {
+						type: Number,
+						required: false
+					}
+				},
+				connector: Connector
+			});
+
+			User.create({name:'Jeff'}, function(err,user){
+				should(err).not.be.ok;
+				var serialized = JSON.stringify(user);
+				should(serialized).equal(JSON.stringify({id:1,name:'Jeff',age:null}));
+				callback();
+			});
+
+		});
+	});
+
 	describe('#metadata', function(){
 
 		it('should be able to fetch no metadata', function(){
