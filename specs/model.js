@@ -456,6 +456,18 @@ describe('models',function(){
 
 	});
 
+	it('should be able to create model without connector',function(){
+		var User = orm.Model.define('user',{
+			fields: {
+				name: {
+					type: String,
+					required: false
+				}
+			}
+		});
+		// should not throw exception
+	});
+
 	it('should be able to extend models',function(){
 
 		var Connector = new orm.MemoryConnector();
@@ -591,7 +603,7 @@ describe('models',function(){
 
 	});
 
-	it('should raise exception if no connector set on model',function(){
+	it('should raise exception if no connector set on model and you use it',function(){
 
 		(function(){
 			var User = orm.Model.define('user',{
@@ -606,8 +618,34 @@ describe('models',function(){
 					}
 				}
 			});
+			// once you attempt to use it, should raise if not set
+			User.find({});
 		}).should.throw('missing required connector');
 
+	});
+
+	it('should be able to change model',function(){
+
+		var connector = new orm.MemoryConnector();
+		var connector2 = new orm.MemoryConnector();
+
+		var User = orm.Model.define('user',{
+			fields: {
+				name: {
+					type: String,
+					required: false
+				},
+				age: {
+					type: Number,
+					required: true
+				}
+			},
+			connector: connector
+		});
+
+		should(User.getConnector()).equal(connector);
+		User.setConnector(connector2);
+		should(User.getConnector()).equal(connector2);
 	});
 
 	it('should error if already deleted',function(callback){
