@@ -818,7 +818,7 @@ describe('models',function(){
 
 	describe('#serialization',function(){
 
-		it.only('should serialize all fields',function(callback){
+		it('should serialize all fields',function(callback){
 			var Connector = new orm.MemoryConnector();
 
 			var User = orm.Model.define('user',{

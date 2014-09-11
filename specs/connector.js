@@ -15,8 +15,15 @@ describe('connectors',function(){
 		orm.Connector.removeAllListeners();
 	});
 
+	it('should require a name',function(){
+		(function(){
+			var MyConnector = orm.Connector.extend({});
+			var connector = new MyConnector();
+		}).should.throw('connector is required to have a name');
+	});
+
 	it('should be able to register and retrieve connectors',function(){
-		var MyConnector = orm.Connector.extend({});
+		var MyConnector = orm.Connector.extend({name:'MyConnector'});
 
 		should(orm.Connector.getConnectors()).be.an.array;
 		should(orm.Connector.getConnectors()).have.length(0);
@@ -38,7 +45,7 @@ describe('connectors',function(){
 
 	it('should be able to create with defaults',function(){
 
-		var MyConnector = orm.Connector.extend({});
+		var MyConnector = orm.Connector.extend({name:'MyConnector'});
 		should(MyConnector).be.an.object;
 
 		var connector = new MyConnector();
@@ -48,7 +55,7 @@ describe('connectors',function(){
 
 	it('should be able to create with config',function(){
 
-		var MyConnector = orm.Connector.extend({});
+		var MyConnector = orm.Connector.extend({name:'MyConnector'});
 
 		should(MyConnector).be.an.object;
 		var connector = new MyConnector({
@@ -65,6 +72,7 @@ describe('connectors',function(){
 		var ctor = false;
 
 		var MyConnector = orm.Connector.extend({
+			name: 'MyConnector',
 			constructor: function(){
 				ctor = true;
 			}
@@ -80,7 +88,7 @@ describe('connectors',function(){
 
 	it('should be able to create by extending another instance',function(){
 
-		var MyConnector = orm.Connector.extend({});
+		var MyConnector = orm.Connector.extend({name:'MyConnector'});
 
 		should(MyConnector).be.an.object;
 		var connector = new MyConnector();
@@ -105,6 +113,7 @@ describe('connectors',function(){
 			end = false;
 
 		var MyConnector = orm.Connector.extend({
+			name: 'MyConnector',
 			startRequest: function(name, args, request, next){
 				start = true;
 				next();
@@ -181,13 +190,14 @@ describe('connectors',function(){
 	describe("#lifecycle", function(){
 
 		it("should support no lifecycle methods", function(callback){
-			var MyConnector = orm.Connector.extend({});
+			var MyConnector = orm.Connector.extend({name:'MyConnector'});
 			var connector = new MyConnector();
 			connector.connect(callback);
 		});
 
 		it("should support override of base config with constructor config", function(callback){
 			var MyConnector = orm.Connector.extend({
+				name: 'MyConnector',
 				config: {foo:'bar'}
 			});
 			var connector = new MyConnector({
@@ -204,6 +214,7 @@ describe('connectors',function(){
 		it("should support custom connect", function(callback){
 			var called;
 			var MyConnector = orm.Connector.extend({
+				name: 'MyConnector',
 				connect: function(callback) {
 					called = true;
 					callback();
@@ -219,6 +230,7 @@ describe('connectors',function(){
 
 		it("should support only fetchConfig method", function(callback){
 			var MyConnector = orm.Connector.extend({
+				name: 'MyConnector',
 				fetchConfig: function(callback) {
 					callback(null, {foo:'bar'});
 				}
@@ -234,6 +246,7 @@ describe('connectors',function(){
 
 		it("should support only fetchConfig but constructor should override", function(callback){
 			var MyConnector = orm.Connector.extend({
+				name: 'MyConnector',
 				fetchConfig: function(callback) {
 					callback(null, {foo:'bar'});
 				}
@@ -251,6 +264,7 @@ describe('connectors',function(){
 
 		it("should support only fetchSchema only", function(callback){
 			var MyConnector = orm.Connector.extend({
+				name: 'MyConnector',
 				fetchSchema: function(callback) {
 					callback(null, {foo:'bar'});
 				}
@@ -267,6 +281,7 @@ describe('connectors',function(){
 
 		it("should support only fetchMetadata only", function(callback){
 			var MyConnector = orm.Connector.extend({
+				name: 'MyConnector',
 				fetchMetadata: function(callback) {
 					callback(null, {foo:'bar'});
 				}
@@ -282,6 +297,7 @@ describe('connectors',function(){
 
 		it("should support only fetchSchema and fetchMetadata", function(callback){
 			var MyConnector = orm.Connector.extend({
+				name: 'MyConnector',
 				fetchSchema: function(callback) {
 					callback(null, {foo:'bar'});
 				},
@@ -304,7 +320,7 @@ describe('connectors',function(){
 
 	describe('#events',function() {
 		it ('should support event emitter events on instance', function(){
-			var MyConnector = orm.Connector.extend({});
+			var MyConnector = orm.Connector.extend({name:'MyConnector'});
 			var connector = new MyConnector();
 			var foo;
 			connector.on('foo',function(value){
