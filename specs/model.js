@@ -789,6 +789,203 @@ describe('models',function(){
 
 	});
 
+	it('should not return readonly fields in values',function(){
+
+		var Connector = new orm.MemoryConnector();
+
+		var User = orm.Model.define('user',{
+			fields: {
+				name: {
+					type: String,
+					required: false
+				},
+				email: {
+					type: String,
+					readonly: true
+				}
+			},
+			connector: Connector
+		});
+
+		var model = User.instance({name:'bar'},true);
+		var values = model.values();
+		should(values).be.an.object;
+		should(values).have.property('name','bar');
+		should(values).not.have.property('email');
+	});
+
+	it('should not return toArray from collection',function(){
+
+		var Connector = new orm.MemoryConnector();
+
+		var User = orm.Model.define('user',{
+			fields: {
+				name: {
+					type: String,
+					required: false
+				},
+				email: {
+					type: String,
+					readonly: true
+				}
+			},
+			connector: Connector
+		});
+
+		var model = User.instance({name:'bar'},true);
+		var collection = new orm.Collection(User, [model]);
+		var array = collection.toArray();
+		should(array).be.an.array;
+		should(array).have.length(1);
+		should(array[0]).be.equal(model);
+	});
+
+	it('should be able to pass single value to Collection',function(){
+
+		var Connector = new orm.MemoryConnector();
+
+		var User = orm.Model.define('user',{
+			fields: {
+				name: {
+					type: String,
+					required: false
+				},
+				email: {
+					type: String,
+					readonly: true
+				}
+			},
+			connector: Connector
+		});
+
+		var model = User.instance({name:'bar'},true);
+		var collection = new orm.Collection(User, model);
+		should(collection.at(0).value()[0]).be.equal(model);
+		should(collection[0]).be.equal(model);
+		should(collection.get(0)).be.equal(model);
+	});
+
+	it('should be able to set dirty fields and retrieve them',function(){
+
+		var Connector = new orm.MemoryConnector();
+
+		var User = orm.Model.define('user',{
+			fields: {
+				name: {
+					type: String,
+					required: false
+				},
+				email: {
+					type: String
+				}
+			},
+			connector: Connector
+		});
+
+		var model = User.instance({name:'bar',email:'jeff@foo.com'},true);
+		model.set('name','foo');
+		should(model.isUnsaved()).be.true;
+		model.getChangedFields().should.have.property('name','foo');
+		model.getChangedFields().should.not.have.property('email');
+	});
+
+	it('should not be able to set readonly fields',function(){
+
+		var Connector = new orm.MemoryConnector();
+
+		var User = orm.Model.define('user',{
+			fields: {
+				name: {
+					type: String,
+					required: false
+				},
+				email: {
+					type: String,
+					readonly: true
+				}
+			},
+			connector: Connector
+		});
+
+		var model = User.instance({name:'bar',email:'jeff@foo.com'},true);
+		(function(){
+			model.set('email','foo@bar.com');
+		}).should.throw('cannot set read-only field: email');
+	});
+
+	describe("#mapping", function(){
+
+		it("should be able to serialize", function(){
+			var Connector = new orm.MemoryConnector();
+
+			var User = orm.Model.define('user',{
+				fields: {
+					name: {
+						type: String
+					}
+				},
+				mappings: {
+					name: {
+						serialize: function(value) {
+							var tokens = value.split('/');
+							return {
+								a: tokens[0],
+								b: tokens[1]
+							};
+						},
+						deserialize: function(value) {
+							return value.a + '/' + value.b;
+						}
+					}
+				},
+				connector: Connector
+			});
+
+			var model = User.instance({name:'foo/bar'},true);
+			var obj = model.toJSON();
+			should(obj).be.an.object;
+			should(obj).have.property('name');
+			should(obj.name).have.property('a','foo');
+			should(obj.name).have.property('b','bar');
+
+		});
+
+		it("should be able to deserialize", function(){
+			var Connector = new orm.MemoryConnector();
+
+			var User = orm.Model.define('user',{
+				fields: {
+					name: {
+						type: String
+					}
+				},
+				mappings: {
+					name: {
+						serialize: function(value) {
+							var tokens = value.split('/');
+							return {
+								a: tokens[0],
+								b: tokens[1]
+							};
+						},
+						deserialize: function(value) {
+							return value.a + '/' + value.b;
+						}
+					}
+				},
+				connector: Connector
+			});
+
+			var model = User.instance({name:'foo/bar'},true);
+			model.set("name", {a:"bar",b:"foo"});
+			var obj = model.get("name");
+			should(obj).be.equal("bar/foo");
+			var changed = model.getChangedFields();
+			should(changed).have.property('name','bar/foo');
+		});
+
+	});
+
 	describe('#connector', function(){
 
 		it('should be able to add to collection', function(){
