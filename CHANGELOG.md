@@ -15,24 +15,24 @@ To link a field to a Model, you can specify the `model` attribute with the name 
 Example usage:
 
 ```javascript
-	var Person = orm.Model.define('person',{
-		fields: {
-			name: {
-				type: String
-			},
-			age: {
-				type: Number
-			}
+var Person = orm.Model.define('person',{
+	fields: {
+		name: {
+			type: String
+		},
+		age: {
+			type: Number
 		}
-	});
-	var Contact = orm.Model.define('contact',{
-		fields: {
-			person: {
-				type: Object,
-				model: 'person'
-			}
+	}
+});
+var Contact = orm.Model.define('contact',{
+	fields: {
+		person: {
+			type: Object,
+			model: 'person'
 		}
-	});
+	}
+});
 ```
 
 # 1.0.14 (2014-09-20)
@@ -95,5 +95,3 @@ var Customer = APIBuilder.createModel('customer',{
 In the above example, the field named `field` would call the `serialize` function before the object was sent to the client.
 
 To deserialize, the function `deserialize` would be called before the object is sent to the connector.
-
-
