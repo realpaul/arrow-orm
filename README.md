@@ -2,6 +2,11 @@
 
 Object relational mapping (ORM) framework for [API Builder](https://github.com/appcelerator/api).
 
+## Changelog
+
+Please see the [CHANGELOG](https://github.com/appcelerator/api-orm/blob/master/CHANGELOG.md) for the latest changes.
+
+
 ## Main Components
 
 There are 4 main components to the ORM framework:
