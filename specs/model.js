@@ -986,6 +986,39 @@ describe('models',function(){
 
 	});
 
+	describe('#linkage', function(){
+
+		it('should be able to link to model', function(){
+			var Connector = new orm.MemoryConnector();
+			var Person = orm.Model.define('person',{
+				fields: {
+					name: {
+						type: String
+					},
+					age: {
+						type: Number
+					}
+				},
+				connector: Connector
+			});
+			var Contact = orm.Model.define('contact',{
+				fields: {
+					person: {
+						type: Object,
+						model: 'person'
+					}
+				},
+				connector: Connector
+			});
+			var person = Person.instance({name:"jeff",age:10});
+			var contact = Contact.instance({person: person});
+			should(person.get("name")).be.equal("jeff");
+			should(contact.get("person")).have.property("name","jeff");
+			should(contact.get("person")).have.property("age",10);
+		});
+
+	});
+
 	describe('#connector', function(){
 
 		it('should be able to add to collection', function(){

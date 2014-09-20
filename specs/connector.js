@@ -316,6 +316,38 @@ describe('connectors',function(){
 			});
 		});
 
+		it("should support custom primary key type using idAttribute", function(){
+			var MyConnector = orm.Connector.extend({
+				name: 'MyConnector',
+				idAttribute: 'foo'
+			});
+			var connector = new MyConnector();
+			var User = orm.Model.define('user',{
+				fields: {
+					name: {type: String }
+				}
+			});
+			var pk = connector.getPrimaryKey(User,{foo:123});
+			should(pk).be.equal(123);
+		});
+
+		it("should support custom primary key type using override", function(){
+			var MyConnector = orm.Connector.extend({
+				name: 'MyConnector',
+				getPrimaryKey: function(Model, data) {
+					return 123;
+				}
+			});
+			var connector = new MyConnector();
+			var User = orm.Model.define('user',{
+				fields: {
+					name: {type: String }
+				}
+			});
+			var pk = connector.getPrimaryKey(User,{foo:123});
+			should(pk).be.equal(123);
+		});
+
 	});
 
 	describe('#events',function() {

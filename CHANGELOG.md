@@ -1,3 +1,40 @@
+# 1.0.15 (unreleased)
+
+### Model
+
+- Added method `getModel` to get a model by name
+
+### Connector
+
+- Added prototype method `getPrimaryKey` that will allow the Connector to provide returning a primary key value for a Model and specific data value.  By default, the default implementation will return the value of the `id` property.  However, Connectors must either override this method or set the `idAttribute` property if the primary key is different than `id`.  Connectors that have the same primary key name across all Models can use the `idAttribute`.  For Connectors where the primary key is different dependant on the Model, the `getPrimaryKey` method should be provided.
+
+### Model Linking
+
+To link a field to a Model, you can specify the `model` attribute with the name of the model.  Model fields can only be linked to field types `Object` or `Array`.
+
+Example usage:
+
+```javascript
+	var Person = orm.Model.define('person',{
+		fields: {
+			name: {
+				type: String
+			},
+			age: {
+				type: Number
+			}
+		}
+	});
+	var Contact = orm.Model.define('contact',{
+		fields: {
+			person: {
+				type: Object,
+				model: 'person'
+			}
+		}
+	});
+```
+
 # 1.0.14 (2014-09-20)
 
 ### Collection
