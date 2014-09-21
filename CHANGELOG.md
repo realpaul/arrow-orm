@@ -1,3 +1,13 @@
+# 1.0.16 (2014-09-20)
+
+### Model
+
+- Fixed error in `extend` method that wasn't properly merging model fields
+- Added field level mapping support for `serialize` and `deserialize`
+- Added field level renaming using `name` field for both serialization and deserialization
+- Support model functions
+
+
 # 1.0.15 (2014-09-20)
 
 ### Model

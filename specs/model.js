@@ -561,10 +561,10 @@ describe('models',function(){
 			should(json).be.equal(JSON.stringify([_user]));
 
 			var inspect = util.inspect(collection.first());
-			should(inspect).be.equal(util.inspect(users[0]));
+			should(inspect).be.equal(util.inspect(_user));
 
 			inspect = util.inspect(collection.at(0));
-			should(inspect).be.equal(util.inspect([users[0]]));
+			should(inspect).be.equal(util.inspect([_user]));
 
 			var result = collection.sortBy('age').first();
 
@@ -950,6 +950,36 @@ describe('models',function(){
 
 		});
 
+		it("should be able to serialize in field", function(){
+			var Connector = new orm.MemoryConnector();
+
+			var User = orm.Model.define('user',{
+				fields: {
+					name: {
+						type: String,
+						serialize: function(value) {
+							var tokens = value.split('/');
+							return {
+								a: tokens[0],
+								b: tokens[1]
+							};
+						},
+						deserialize: function(value) {
+							return value.a + '/' + value.b;
+						}
+					}
+				},
+				connector: Connector
+			});
+
+			var model = User.instance({name:'foo/bar'},true);
+			var obj = model.toJSON();
+			should(obj).be.an.object;
+			should(obj).have.property('name');
+			should(obj.name).have.property('a','foo');
+			should(obj.name).have.property('b','bar');
+		});
+
 		it("should be able to deserialize", function(){
 			var Connector = new orm.MemoryConnector();
 
@@ -961,6 +991,36 @@ describe('models',function(){
 				},
 				mappings: {
 					name: {
+						serialize: function(value) {
+							var tokens = value.split('/');
+							return {
+								a: tokens[0],
+								b: tokens[1]
+							};
+						},
+						deserialize: function(value) {
+							return value.a + '/' + value.b;
+						}
+					}
+				},
+				connector: Connector
+			});
+
+			var model = User.instance({name:'foo/bar'},true);
+			model.set("name", {a:"bar",b:"foo"});
+			var obj = model.get("name");
+			should(obj).be.equal("bar/foo");
+			var changed = model.getChangedFields();
+			should(changed).have.property('name','bar/foo');
+		});
+
+		it("should be able to deserialize in field", function(){
+			var Connector = new orm.MemoryConnector();
+
+			var User = orm.Model.define('user',{
+				fields: {
+					name: {
+						type: String,
 						serialize: function(value) {
 							var tokens = value.split('/');
 							return {
@@ -1046,6 +1106,49 @@ describe('models',function(){
 		});
 	});
 
+	describe('#mapping', function(){
+		it('should support field renaming on serialization',function(callback){
+			var Connector = new orm.MemoryConnector();
+
+			var User = orm.Model.define('user',{
+				fields: {
+					name: {
+						type: String,
+						required: false,
+						name: 'thename'
+					}
+				},
+				connector: Connector
+			});
+
+			User.create({name:'Jeff'}, function(err,user){
+				should(err).not.be.ok;
+				var serialized = JSON.stringify(user);
+				should(serialized).equal(JSON.stringify({id:1,thename:'Jeff'}));
+				callback();
+			});
+
+		});
+		it('should support field renaming on deserialization',function(){
+			var Connector = new orm.MemoryConnector();
+
+			var User = orm.Model.define('user',{
+				fields: {
+					name: {
+						type: String,
+						required: false,
+						name: 'thename'
+					}
+				},
+				connector: Connector
+			});
+
+			var user = User.instance({thename:'Jeff'});
+			var serialized = JSON.stringify(user);
+			should(serialized).equal(JSON.stringify({thename:'Jeff'}));
+		});
+	});
+
 	describe('#serialization',function(){
 
 		it('should serialize all fields',function(callback){
@@ -1071,8 +1174,8 @@ describe('models',function(){
 				should(serialized).equal(JSON.stringify({id:1,name:'Jeff',age:null}));
 				callback();
 			});
-
 		});
+
 	});
 
 	describe('#metadata', function(){
