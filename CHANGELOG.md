@@ -1,3 +1,11 @@
+# 1.0.17 (2014-10-14)
+
+- [#13](https://github.com/appcelerator/api-orm/pull/13) Fixed method binding for some specific Connector methods
+- [#15](https://github.com/appcelerator/api-orm/issues/15) Fixed Collection to only accept a Model instance
+- [#94](https://github.com/appcelerator/api/issues/94) Added actions property to Model to allow you to specify the CRUD actions that the model supports. One of 'create', 'read', 'update', 'delete'.  Defaults to all.
+- [#95](https://github.com/appcelerator/api/issues/95) Added support for Connector queries
+- [#98](https://github.com/appcelerator/api/issues/98) Added autogen property to Model to indicate if the model supports auto generation of APIs.  Defaults to true
+
 # 1.0.16 (2014-09-20)
 
 ### Model

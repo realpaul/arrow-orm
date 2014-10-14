@@ -1258,4 +1258,193 @@ describe('models',function(){
 
 	});
 
+	describe("#autogen", function(){
+
+		it('should be able have default autogen to true', function(){
+			var Connector = new orm.MemoryConnector();
+
+			var User = orm.Model.define('user',{
+				fields: {
+					name: {
+						type: String,
+						required: false
+					}
+				},
+				connector: Connector,
+				metadata: {
+					memory: {
+						foo: 'bar'
+					}
+				}
+			});
+
+			User.autogen.should.be.true;
+		});
+
+		it('should be able to set autogen to true', function(){
+			var Connector = new orm.MemoryConnector();
+
+			var User = orm.Model.define('user',{
+				fields: {
+					name: {
+						type: String,
+						required: false
+					}
+				},
+				connector: Connector,
+				metadata: {
+					memory: {
+						foo: 'bar'
+					}
+				},
+				autogen: true
+			});
+
+			User.autogen.should.be.true;
+		});
+
+		it('should be able to set autogen to false', function(){
+			var Connector = new orm.MemoryConnector();
+
+			var User = orm.Model.define('user',{
+				fields: {
+					name: {
+						type: String,
+						required: false
+					}
+				},
+				connector: Connector,
+				metadata: {
+					memory: {
+						foo: 'bar'
+					}
+				},
+				autogen: false
+			});
+
+			User.autogen.should.be.false;
+		});
+
+	});
+
+	describe("#actions", function(){
+
+		it('should be able have default actions', function(){
+			var Connector = new orm.MemoryConnector();
+
+			var User = orm.Model.define('user',{
+				fields: {
+					name: {
+						type: String,
+						required: false
+					}
+				},
+				connector: Connector,
+				metadata: {
+					memory: {
+						foo: 'bar'
+					}
+				}
+			});
+
+			User.actions.should.eql(['create','read','update','delete']);
+		});
+
+		it('should be able set one action', function(){
+			var Connector = new orm.MemoryConnector();
+
+			var User = orm.Model.define('user',{
+				fields: {
+					name: {
+						type: String,
+						required: false
+					}
+				},
+				connector: Connector,
+				metadata: {
+					memory: {
+						foo: 'bar'
+					}
+				},
+				actions: ['create']
+			});
+
+			User.actions.should.eql(['create']);
+		});
+
+		it('should require an array of actions', function(){
+			var Connector = new orm.MemoryConnector();
+
+
+			(function(){
+			var User = orm.Model.define('user',{
+				fields: {
+					name: {
+						type: String,
+						required: false
+					}
+				},
+				connector: Connector,
+				metadata: {
+					memory: {
+						foo: 'bar'
+					}
+				},
+				actions: 'create'
+			});
+			}).should.throw('actions must be an array with one or more of the following: create, read, update, delete');
+		});
+
+		it('should require a specific type of action', function(){
+			var Connector = new orm.MemoryConnector();
+
+
+			(function(){
+				var User = orm.Model.define('user',{
+					fields: {
+						name: {
+							type: String,
+							required: false
+						}
+					},
+					connector: Connector,
+					metadata: {
+						memory: {
+							foo: 'bar'
+						}
+					},
+					actions: ['foo']
+				});
+			}).should.throw('invalid action `foo` must be an array with one or more of the following: create, read, update, delete');
+		});
+
+	});
+
+	describe("#collection", function(){
+
+		it("should not be able to send non-Model to collection", function(){
+			var Connector = new orm.MemoryConnector();
+
+			var User = orm.Model.define('user',{
+				fields: {
+					name: {
+						type: String,
+						required: false
+					}
+				},
+				connector: Connector,
+				metadata: {
+					memory: {
+						foo: 'bar'
+					}
+				},
+				actions: ['create']
+			});
+
+			(function(){
+				var collection = new orm.Collection(User, [{name:"Jeff"}]);
+			}).should.throw('Collection only takes an array of Model instance objects');
+		});
+	});
+
 });
