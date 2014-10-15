@@ -1,3 +1,7 @@
+# 1.0.18 (unreleased)
+
+- make sure autogen, actions are propagated
+
 # 1.0.17 (2014-10-14)
 
 - [#13](https://github.com/appcelerator/api-orm/pull/13) Fixed method binding for some specific Connector methods
