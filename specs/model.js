@@ -283,6 +283,43 @@ describe('models',function(){
 
 	});
 
+	it("should support fields of type Array", function(){
+		var Connector = new orm.MemoryConnector();
+		var Preowned = orm.Model.define("preowned", {
+			fields: {
+				model: { type: "string" },
+				aircraftStatus: { type: "string" },
+				cabinEntertainment: { type: "array" }
+			},
+			connector: Connector,
+			autogen: false
+		});
+		var data = {
+			model:'Rick',
+			aircraftStatus: 'in-flight',
+			cabinEntertainment:
+				[
+					{
+						"feature": "DVD player (multi-region) / 15” LCD flat panel swing-out monitor"
+					},
+					{
+						"feature": "Rosen View LX moving map program / Six Rosen 6.5” LCD monitors"
+					},
+					{
+						"feature": "XM satellite radio / Eight 115v outlets"
+					}
+				]
+		};
+		var preowned = Preowned.instance(data,true);
+		preowned.get('model').should.equal('Rick');
+		preowned.get('aircraftStatus').should.equal('in-flight');
+		preowned.get('cabinEntertainment').should.equal(data.cabinEntertainment);
+		preowned.get('cabinEntertainment').should.have.length(3);
+		preowned.get('cabinEntertainment')[0].should.have.property('feature',"DVD player (multi-region) / 15” LCD flat panel swing-out monitor");
+		preowned.get('cabinEntertainment')[1].should.have.property('feature',"Rosen View LX moving map program / Six Rosen 6.5” LCD monitors");
+		preowned.get('cabinEntertainment')[2].should.have.property('feature',"XM satellite radio / Eight 115v outlets");
+	});
+
 	it('should be able to CRUD',function(callback){
 
 		var Connector = new orm.MemoryConnector();
@@ -1445,6 +1482,7 @@ describe('models',function(){
 				var collection = new orm.Collection(User, [{name:"Jeff"}]);
 			}).should.throw('Collection only takes an array of Model instance objects');
 		});
+
 	});
 
 });
