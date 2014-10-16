@@ -950,7 +950,86 @@ describe('models',function(){
 		}).should.throw('cannot set read-only field: email');
 	});
 
+	it('should be able to get model from instance',function(){
+
+		var Connector = new orm.MemoryConnector();
+
+		var User = orm.Model.define('user',{
+			fields: {
+				name: {
+					type: String,
+					required: false
+				},
+				email: {
+					type: String,
+					readonly: true
+				}
+			},
+			connector: Connector
+		});
+
+		var instance = User.instance({name:'bar',email:'jeff@foo.com'},true);
+		should(instance.getModel()).be.equal(User);
+	});
+
 	describe("#mapping", function(){
+
+		it("should pass field name to serializer", function(){
+			var Connector = new orm.MemoryConnector();
+
+			var _name;
+
+			var User = orm.Model.define('user',{
+				fields: {
+					name: {
+						type: String
+					}
+				},
+				mappings: {
+					name: {
+						serialize: function(value, name) {
+							_name = name;
+						}
+					}
+				},
+				connector: Connector
+			});
+
+			var model = User.instance({name:'foo/bar'},true);
+			var obj = model.toJSON();
+			should(_name).be.equal('name');
+		});
+
+		it("should pass instance to serializer", function(){
+			var Connector = new orm.MemoryConnector();
+
+			var _instance;
+
+			var User = orm.Model.define('user',{
+				fields: {
+					name: {
+						type: String
+					},
+					bar: {
+						type: String
+					}
+				},
+				mappings: {
+					name: {
+						serialize: function(value, name, instance) {
+							_instance = instance;
+						}
+					}
+				},
+				connector: Connector
+			});
+
+			var model = User.instance({name:'foo/bar', bar:'foo'},true);
+			var obj = model.toJSON();
+			should(_instance).be.ok;
+			should(_instance).be.an.object;
+			should(_instance.get('bar')).be.equal('foo');
+		});
 
 		it("should be able to serialize", function(){
 			var Connector = new orm.MemoryConnector();

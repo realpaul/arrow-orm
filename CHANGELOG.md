@@ -1,6 +1,8 @@
 # 1.0.18 (unreleased)
 
 - make sure autogen, actions are propagated
+- pass the Model instance to serializer and deserializer to allow it to use other instance values to set/get result
+- add `getModel` to Instance to return the Model for the instance
 
 # 1.0.17 (2014-10-14)
 
