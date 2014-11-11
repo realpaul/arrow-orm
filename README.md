@@ -2,6 +2,8 @@
 
 Object relational mapping (ORM) framework for [API Builder](https://github.com/appcelerator/api).
 
+> This software is pre-release and not yet ready for usage.  Please don't use this just yet while we're working through testing and finishing it up. Once it's ready, we'll make an announcement about it.
+
 ## Changelog
 
 Please see the [CHANGELOG](https://github.com/appcelerator/api-orm/blob/master/CHANGELOG.md) for the latest changes.
@@ -147,3 +149,6 @@ var connector = new MyConnector({
 });
 ```
 
+## Licensing
+
+This software is licensed under the Apache 2 Public License.  However, usage of the software to access the Appcelerator Platform is governed by the Appcelerator Enterprise Software License Agreement. 
