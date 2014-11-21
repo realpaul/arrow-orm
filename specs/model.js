@@ -89,6 +89,35 @@ describe('models',function(){
 
 	});
 
+	it('should be able get payloads for servers',function(callback){
+		var Connector = new orm.MemoryConnector();
+		var User = orm.Model.define('user',{
+			fields: {
+				name: {
+					name: 'internalName',
+					type: String,
+					default: 'Jeff'
+				},
+				age: {
+					type: Number,
+					default: 10
+				}
+			},
+			connector: Connector
+		});
+
+		User.create(function(err,instance){
+			should(err).be.not.ok;
+			should(instance).be.an.Object;
+			var payload = instance.toPayload();
+			should(payload).be.an.Object;
+			should(payload.internalName).be.ok;
+			should(payload.age).be.ok;
+			callback();
+		});
+
+	});
+
 	it('should be able to create with defaults',function(callback){
 
 		var Connector = new orm.MemoryConnector();
