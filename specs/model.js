@@ -316,9 +316,9 @@ describe('models',function(){
 		var Connector = new orm.MemoryConnector();
 		var Preowned = orm.Model.define("preowned", {
 			fields: {
-				model: { type: "string" },
-				aircraftStatus: { type: "string" },
-				cabinEntertainment: { type: "array" }
+				model: { type: String },
+				aircraftStatus: { type: String },
+				cabinEntertainment: { type: Array }
 			},
 			connector: Connector,
 			autogen: false
