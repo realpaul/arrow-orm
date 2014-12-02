@@ -1269,7 +1269,9 @@ describe('models',function(){
 			User.create({name:'Jeff'}, function(err,user){
 				should(err).not.be.ok;
 				var serialized = JSON.stringify(user);
-				should(serialized).equal(JSON.stringify({id:1,thename:'Jeff'}));
+				should(serialized).equal(JSON.stringify({ id: 1, name: 'Jeff' }));
+				var serializedPayload = JSON.stringify(user.toPayload());
+				should(serializedPayload).equal(JSON.stringify({ thename: 'Jeff' }));
 				callback();
 			});
 
@@ -1290,7 +1292,7 @@ describe('models',function(){
 
 			var user = User.instance({thename:'Jeff'});
 			var serialized = JSON.stringify(user);
-			should(serialized).equal(JSON.stringify({thename:'Jeff'}));
+			should(serialized).equal(JSON.stringify({name:'Jeff'}));
 		});
 	});
 
