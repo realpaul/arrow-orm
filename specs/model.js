@@ -559,7 +559,7 @@ describe('models',function(){
 		should(ExtendedUser).be.an.object;
 		should(ExtendedUser.connector).be.an.object;
 		should(ExtendedUser.connector).be.equal(Connector);
-		should(ExtendedUser.fields.name).be.ok;
+		should(ExtendedUser.fields.name).be.not.ok;
 		should(ExtendedUser.fields.age).be.ok;
 
 		var AnotherModel = orm.Model.define('another',{
@@ -576,8 +576,8 @@ describe('models',function(){
 		var NewModel = ExtendedUser.extend(AnotherModel);
 
 		should(NewModel).be.an.object;
-		should(NewModel.fields).have.property('name');
-		should(NewModel.fields).have.property('age');
+		should(NewModel.fields).not.have.property('name');
+		should(NewModel.fields).not.have.property('age');
 		should(NewModel.fields).have.property('birthdate');
 
 		(function(){
