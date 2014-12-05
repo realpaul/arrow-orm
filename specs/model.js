@@ -559,7 +559,7 @@ describe('models',function(){
 		should(ExtendedUser).be.an.object;
 		should(ExtendedUser.connector).be.an.object;
 		should(ExtendedUser.connector).be.equal(Connector);
-		should(ExtendedUser.fields.name).be.not.ok;
+		should(ExtendedUser.fields.name).be.ok;
 		should(ExtendedUser.fields.age).be.ok;
 
 		var AnotherModel = orm.Model.define('another',{
@@ -576,13 +576,43 @@ describe('models',function(){
 		var NewModel = ExtendedUser.extend(AnotherModel);
 
 		should(NewModel).be.an.object;
-		should(NewModel.fields).not.have.property('name');
-		should(NewModel.fields).not.have.property('age');
+		should(NewModel.fields).have.property('name');
+		should(NewModel.fields).have.property('age');
 		should(NewModel.fields).have.property('birthdate');
 
 		(function(){
 			NewModel.extend();
 		}).should.throw('invalid argument passed to extend. Must either be a model class or model definition');
+
+	});
+
+	it('should be able to reduce models',function(){
+
+		var Connector = new orm.MemoryConnector();
+
+		var User = orm.Model.define('user',{
+			fields: {
+				name: {
+					type: String,
+					required: false
+				}
+			},
+			connector: Connector
+		});
+
+		var ExtendedUser = User.reduce('ExtendedUser',{
+			fields: {
+				age: {
+					type: Number
+				}
+			}
+		});
+
+		should(ExtendedUser).be.an.object;
+		should(ExtendedUser.connector).be.an.object;
+		should(ExtendedUser.connector).be.equal(Connector);
+		should(ExtendedUser.fields.name).not.be.ok;
+		should(ExtendedUser.fields.age).be.ok;
 
 	});
 
@@ -843,6 +873,10 @@ describe('models',function(){
 			// available to all instances
 			getProperName: function() {
 				return this.name.charAt(0).toUpperCase() + this.name.substring(1);
+			},
+
+			getMyConnector: function() {
+				return this.getConnector();
 			}
 		});
 
@@ -850,6 +884,7 @@ describe('models',function(){
 			should(err).not.be.ok;
 			should(user).be.an.object;
 			should(user.getProperName()).be.equal('Jeff');
+			should(user.getMyConnector()).be.equal(Connector);
 			callback();
 		});
 
