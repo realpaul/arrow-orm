@@ -16,7 +16,7 @@ describe('models',function(){
 		orm.Model.removeAllListeners();
 	});
 
-	it('should be able register and retrieve models',function(){
+	it('should be able to register and retrieve models',function(){
 		var Connector = new orm.MemoryConnector();
 
 		var found;
@@ -42,7 +42,7 @@ describe('models',function(){
 		should(orm.Model.getModels()[0]).equal(User);
 	});
 
-	it('should be able get model keys',function(){
+	it('should be able to get model keys',function(){
 		var Connector = new orm.MemoryConnector();
 		var User = orm.Model.define('user',{
 			fields: {
@@ -62,7 +62,7 @@ describe('models',function(){
 		should(User.keys()).eql(['name','age']);
 	});
 
-	it('should be able get instance values',function(callback){
+	it('should be able to get instance values',function(callback){
 		var Connector = new orm.MemoryConnector();
 		var User = orm.Model.define('user',{
 			fields: {
@@ -89,7 +89,7 @@ describe('models',function(){
 
 	});
 
-	it('should be able get payloads for servers',function(callback){
+	it('should be able to get payloads for servers',function(callback){
 		var Connector = new orm.MemoryConnector();
 		var User = orm.Model.define('user',{
 			fields: {
@@ -538,7 +538,7 @@ describe('models',function(){
 
 		var Connector = new orm.MemoryConnector();
 
-		var User = orm.Model.define('user',{
+		var User = orm.Model.define('User',{
 			fields: {
 				name: {
 					type: String,
@@ -548,7 +548,7 @@ describe('models',function(){
 			connector: Connector
 		});
 
-		var ExtendedUser = User.extend('ExtendedUser',{
+		var AgeModel = User.extend('AgeUser',{
 			fields: {
 				age: {
 					type: Number
@@ -556,32 +556,42 @@ describe('models',function(){
 			}
 		});
 
-		should(ExtendedUser).be.an.object;
-		should(ExtendedUser.connector).be.an.object;
-		should(ExtendedUser.connector).be.equal(Connector);
-		should(ExtendedUser.fields.name).be.ok;
-		should(ExtendedUser.fields.age).be.ok;
+		should(AgeModel).be.an.Object;
+		should(AgeModel.connector).be.an.Object;
+		should(AgeModel.connector).be.equal(Connector);
+		should(AgeModel.fields.name).be.ok;
+		should(AgeModel.fields.age).be.ok;
 
-		var AnotherModel = orm.Model.define('another',{
+		// test extending an extended model from another model
+
+		var BirthdayAgeModel = AgeModel.extend(orm.Model.define('BirthdayAgeUser', {
 			fields: {
 				birthdate: {
 					type: Date
 				}
 			},
 			connector: Connector
-		});
-
-		// test extending an extended model from another model
-
-		var NewModel = ExtendedUser.extend(AnotherModel);
-
-		should(NewModel).be.an.object;
-		should(NewModel.fields).have.property('name');
-		should(NewModel.fields).have.property('age');
-		should(NewModel.fields).have.property('birthdate');
+		}));
+		should(BirthdayAgeModel).be.an.Object;
+		should(BirthdayAgeModel.fields).have.property('name');
+		should(BirthdayAgeModel.fields).have.property('age');
+		should(BirthdayAgeModel.fields).have.property('birthdate');
+		
+		var BirthdayModel = User.extend(orm.Model.define('BirthdayUser', {
+			fields: {
+				birthdate: {
+					type: Date
+				}
+			},
+			connector: Connector
+		}));
+		should(BirthdayModel).be.an.Object;
+		should(BirthdayModel.fields).have.property('name');
+		should(BirthdayModel.fields).not.have.property('age');
+		should(BirthdayModel.fields).have.property('birthdate');
 
 		(function(){
-			NewModel.extend();
+			BirthdayAgeModel.extend();
 		}).should.throw('invalid argument passed to extend. Must either be a model class or model definition');
 
 	});
