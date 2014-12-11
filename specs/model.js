@@ -106,6 +106,13 @@ describe('models',function(){
 			connector: Connector
 		});
 
+		var payloadKeys = User.payloadKeys(),
+			modelKeys = User.keys();
+		should(payloadKeys).containEql('internalName');
+		should(payloadKeys).containEql('age');
+		should(modelKeys).containEql('name');
+		should(modelKeys).containEql('age');
+
 		User.create(function(err,instance){
 			should(err).be.not.ok;
 			should(instance).be.an.Object;
