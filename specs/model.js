@@ -101,6 +101,11 @@ describe('models',function(){
 				age: {
 					type: Number,
 					default: 10
+				},
+				yearOfBirth: {
+					type: Number,
+					custom: true,
+					default: (new Date().getFullYear() - 10)
 				}
 			},
 			connector: Connector
@@ -110,16 +115,20 @@ describe('models',function(){
 			modelKeys = User.keys();
 		should(payloadKeys).containEql('internalName');
 		should(payloadKeys).containEql('age');
+		should(payloadKeys).not.containEql('yearOfBirth');
 		should(modelKeys).containEql('name');
 		should(modelKeys).containEql('age');
+		should(modelKeys).containEql('yearOfBirth');
 
 		User.create(function(err,instance){
 			should(err).be.not.ok;
 			should(instance).be.an.Object;
 			var payload = instance.toPayload();
 			should(payload).be.an.Object;
+			should(payload.name).be.not.ok;
 			should(payload.internalName).be.ok;
 			should(payload.age).be.ok;
+			should(payload.yearOfBirth).be.not.ok;
 			callback();
 		});
 
