@@ -1055,7 +1055,7 @@ describe('models',function(){
 
 	describe("#mapping", function(){
 
-		it("should pass field name to serializer", function(){
+		it("should pass field name to getter", function(){
 			var Connector = new orm.MemoryConnector();
 
 			var _name;
@@ -1068,7 +1068,7 @@ describe('models',function(){
 				},
 				mappings: {
 					name: {
-						serialize: function(value, name) {
+						get: function(value, name) {
 							_name = name;
 						}
 					}
@@ -1081,7 +1081,7 @@ describe('models',function(){
 			should(_name).be.equal('name');
 		});
 
-		it("should pass instance to serializer", function(){
+		it("should pass instance to getter", function(){
 			var Connector = new orm.MemoryConnector();
 
 			var _instance;
@@ -1097,7 +1097,7 @@ describe('models',function(){
 				},
 				mappings: {
 					name: {
-						serialize: function(value, name, instance) {
+						get: function(value, name, instance) {
 							_instance = instance;
 						}
 					}
@@ -1123,14 +1123,14 @@ describe('models',function(){
 				},
 				mappings: {
 					name: {
-						serialize: function(value) {
+						get: function(value) {
 							var tokens = value.split('/');
 							return {
 								a: tokens[0],
 								b: tokens[1]
 							};
 						},
-						deserialize: function(value) {
+						set: function(value) {
 							return value.a + '/' + value.b;
 						}
 					}
@@ -1147,21 +1147,21 @@ describe('models',function(){
 
 		});
 
-		it("should be able to serialize in field", function(){
+		it("should be able to define a getter for a field", function(){
 			var Connector = new orm.MemoryConnector();
 
 			var User = orm.Model.define('user',{
 				fields: {
 					name: {
 						type: String,
-						serialize: function(value) {
+						get: function(value) {
 							var tokens = value.split('/');
 							return {
 								a: tokens[0],
 								b: tokens[1]
 							};
 						},
-						deserialize: function(value) {
+						set: function(value) {
 							return value.a + '/' + value.b;
 						}
 					}
@@ -1177,7 +1177,7 @@ describe('models',function(){
 			should(obj.name).have.property('b','bar');
 		});
 
-		it("should be able to deserialize", function(){
+		it("should be able to use a setter", function(){
 			var Connector = new orm.MemoryConnector();
 
 			var User = orm.Model.define('user',{
@@ -1188,14 +1188,14 @@ describe('models',function(){
 				},
 				mappings: {
 					name: {
-						serialize: function(value) {
+						get: function(value) {
 							var tokens = value.split('/');
 							return {
 								a: tokens[0],
 								b: tokens[1]
 							};
 						},
-						deserialize: function(value) {
+						set: function(value) {
 							return value.a + '/' + value.b;
 						}
 					}
@@ -1218,14 +1218,14 @@ describe('models',function(){
 				fields: {
 					name: {
 						type: String,
-						serialize: function(value) {
+						get: function(value) {
 							var tokens = value.split('/');
 							return {
 								a: tokens[0],
 								b: tokens[1]
 							};
 						},
-						deserialize: function(value) {
+						set: function(value) {
 							return value.a + '/' + value.b;
 						}
 					}
