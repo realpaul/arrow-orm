@@ -125,7 +125,7 @@ describe('connectors',function(){
 			loginRequired: function(request, next) {
 				next(null, !!!connection);
 			},
-			login: function(request, next) {
+			login: function(request, response, next) {
 				connection = {
 					username: request.params.email
 				};
@@ -147,6 +147,8 @@ describe('connectors',function(){
 			}
 		};
 
+		var response = {};
+
 		var User = orm.Model.define('user',{
 			fields: {
 				name: {
@@ -157,7 +159,7 @@ describe('connectors',function(){
 			connector: connector
 		});
 
-		var UserPromise = User.createRequest(request);
+		var UserPromise = User.createRequest(request, response);
 
 		should(UserPromise).be.an.object;
 		should(UserPromise.connector).be.an.object;
