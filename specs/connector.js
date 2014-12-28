@@ -125,7 +125,7 @@ describe('connectors',function(){
 			loginRequired: function(request, next) {
 				next(null, !!!connection);
 			},
-			login: function(request, next) {
+			login: function(request, response, next) {
 				connection = {
 					username: request.params.email
 				};
@@ -147,6 +147,8 @@ describe('connectors',function(){
 			}
 		};
 
+		var response = {};
+
 		var User = orm.Model.define('user',{
 			fields: {
 				name: {
@@ -157,7 +159,7 @@ describe('connectors',function(){
 			connector: connector
 		});
 
-		var UserPromise = User.createRequest(request);
+		var UserPromise = User.createRequest(request, response);
 
 		should(UserPromise).be.an.object;
 		should(UserPromise.connector).be.an.object;
@@ -228,6 +230,67 @@ describe('connectors',function(){
 			});
 		});
 
+		it("should support validating config from schema", function(next){
+			var MyConnector = orm.Connector.extend({
+				name: 'MyConnector',
+				fetchMetadata: function(callback) {
+					callback(null, {
+						fields: [
+							{
+								name: 'url',
+								required: true,
+								default: '',
+								validator: new RegExp(
+									"^" +
+										// protocol identifier (optional) + //
+									"(?:(?:https?:)?//)?" +
+										// user:pass authentication (optional)
+									"(?:\\S+(?::\\S*)?@)?" +
+										// host (optional) + domain + tld
+									"(?:(?!-)[-a-z0-9\\u00a1-\\uffff]*[a-z0-9\\u00a1-\\uffff]+(?!./|\\.$)\\.?){2,}" +
+										// server port number (optional)
+									"(?::\\d{2,5})?" +
+										// resource path (optional)
+									"(?:/\\S*)?" +
+									"$", "i"
+								)
+							}
+						]
+					});
+				}
+			});
+
+			var connector = new MyConnector();
+			connector.connect(function(err) {
+				should(err).be.ok;
+				should(err.message).containEql('url is a required config property');
+
+				connector = new MyConnector({
+					url: ''
+				});
+				connector.connect(function(err) {
+					should(err).be.ok;
+					should(err.message).containEql('url is a required config property');
+
+					connector = new MyConnector({
+						url: 'ht://bad'
+					});
+					connector.connect(function(err) {
+						should(err).be.ok;
+						should(err.message).containEql('for url is invalid for the');
+
+						connector = new MyConnector({
+							url: 'http://a.good.com/url/for/the/config'
+						});
+						connector.connect(function(err) {
+							should(err).be.not.ok;
+							next();
+						});
+					});
+				});
+			});
+		});
+
 		it("should support only fetchConfig method", function(callback){
 			var MyConnector = orm.Connector.extend({
 				name: 'MyConnector',
@@ -272,7 +335,7 @@ describe('connectors',function(){
 			var connector = new MyConnector();
 			connector.connect(function(err){
 				should(err).not.be.ok;
-				should(connector.metadata).be.an.object;
+				should(connector.metadata).be.an.Object;
 				should(connector.metadata).have.property('schema');
 				should(connector.metadata.schema).have.property('foo','bar');
 				callback();

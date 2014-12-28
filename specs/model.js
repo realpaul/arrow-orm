@@ -101,18 +101,34 @@ describe('models',function(){
 				age: {
 					type: Number,
 					default: 10
+				},
+				yearOfBirth: {
+					type: Number,
+					custom: true,
+					default: (new Date().getFullYear() - 10)
 				}
 			},
 			connector: Connector
 		});
+
+		var payloadKeys = User.payloadKeys(),
+			modelKeys = User.keys();
+		should(payloadKeys).containEql('internalName');
+		should(payloadKeys).containEql('age');
+		should(payloadKeys).not.containEql('yearOfBirth');
+		should(modelKeys).containEql('name');
+		should(modelKeys).containEql('age');
+		should(modelKeys).containEql('yearOfBirth');
 
 		User.create(function(err,instance){
 			should(err).be.not.ok;
 			should(instance).be.an.Object;
 			var payload = instance.toPayload();
 			should(payload).be.an.Object;
+			should(payload.name).be.not.ok;
 			should(payload.internalName).be.ok;
 			should(payload.age).be.ok;
+			should(payload.yearOfBirth).be.not.ok;
 			callback();
 		});
 
@@ -1048,7 +1064,7 @@ describe('models',function(){
 
 	describe("#mapping", function(){
 
-		it("should pass field name to serializer", function(){
+		it("should pass field name to getter", function(){
 			var Connector = new orm.MemoryConnector();
 
 			var _name;
@@ -1061,7 +1077,7 @@ describe('models',function(){
 				},
 				mappings: {
 					name: {
-						serialize: function(value, name) {
+						get: function(value, name) {
 							_name = name;
 						}
 					}
@@ -1074,7 +1090,7 @@ describe('models',function(){
 			should(_name).be.equal('name');
 		});
 
-		it("should pass instance to serializer", function(){
+		it("should pass instance to getter", function(){
 			var Connector = new orm.MemoryConnector();
 
 			var _instance;
@@ -1090,7 +1106,7 @@ describe('models',function(){
 				},
 				mappings: {
 					name: {
-						serialize: function(value, name, instance) {
+						get: function(value, name, instance) {
 							_instance = instance;
 						}
 					}
@@ -1116,14 +1132,14 @@ describe('models',function(){
 				},
 				mappings: {
 					name: {
-						serialize: function(value) {
+						get: function(value) {
 							var tokens = value.split('/');
 							return {
 								a: tokens[0],
 								b: tokens[1]
 							};
 						},
-						deserialize: function(value) {
+						set: function(value) {
 							return value.a + '/' + value.b;
 						}
 					}
@@ -1140,21 +1156,21 @@ describe('models',function(){
 
 		});
 
-		it("should be able to serialize in field", function(){
+		it("should be able to define a getter for a field", function(){
 			var Connector = new orm.MemoryConnector();
 
 			var User = orm.Model.define('user',{
 				fields: {
 					name: {
 						type: String,
-						serialize: function(value) {
+						get: function(value) {
 							var tokens = value.split('/');
 							return {
 								a: tokens[0],
 								b: tokens[1]
 							};
 						},
-						deserialize: function(value) {
+						set: function(value) {
 							return value.a + '/' + value.b;
 						}
 					}
@@ -1170,7 +1186,7 @@ describe('models',function(){
 			should(obj.name).have.property('b','bar');
 		});
 
-		it("should be able to deserialize", function(){
+		it("should be able to use a setter", function(){
 			var Connector = new orm.MemoryConnector();
 
 			var User = orm.Model.define('user',{
@@ -1181,14 +1197,14 @@ describe('models',function(){
 				},
 				mappings: {
 					name: {
-						serialize: function(value) {
+						get: function(value) {
 							var tokens = value.split('/');
 							return {
 								a: tokens[0],
 								b: tokens[1]
 							};
 						},
-						deserialize: function(value) {
+						set: function(value) {
 							return value.a + '/' + value.b;
 						}
 					}
@@ -1211,14 +1227,14 @@ describe('models',function(){
 				fields: {
 					name: {
 						type: String,
-						serialize: function(value) {
+						get: function(value) {
 							var tokens = value.split('/');
 							return {
 								a: tokens[0],
 								b: tokens[1]
 							};
 						},
-						deserialize: function(value) {
+						set: function(value) {
 							return value.a + '/' + value.b;
 						}
 					}
@@ -1232,39 +1248,6 @@ describe('models',function(){
 			should(obj).be.equal("bar/foo");
 			var changed = model.getChangedFields();
 			should(changed).have.property('name','bar/foo');
-		});
-
-	});
-
-	describe('#linkage', function(){
-
-		it('should be able to link to model', function(){
-			var Connector = new orm.MemoryConnector();
-			var Person = orm.Model.define('person',{
-				fields: {
-					name: {
-						type: String
-					},
-					age: {
-						type: Number
-					}
-				},
-				connector: Connector
-			});
-			var Contact = orm.Model.define('contact',{
-				fields: {
-					person: {
-						type: Object,
-						model: 'person'
-					}
-				},
-				connector: Connector
-			});
-			var person = Person.instance({name:"jeff",age:10});
-			var contact = Contact.instance({person: person});
-			should(person.get("name")).be.equal("jeff");
-			should(contact.get("person")).have.property("name","jeff");
-			should(contact.get("person")).have.property("age",10);
 		});
 
 	});
