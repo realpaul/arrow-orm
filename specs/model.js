@@ -1522,7 +1522,7 @@ describe('models',function(){
 				}
 			});
 
-			User.actions.should.eql(['create','read','update','delete']);
+			User.actions.should.eql(['create','read','update','delete','deleteAll']);
 		});
 
 		it('should be able set one action', function(){
@@ -1567,7 +1567,7 @@ describe('models',function(){
 				},
 				actions: 'create'
 			});
-			}).should.throw('actions must be an array with one or more of the following: create, read, update, delete');
+			}).should.throw('actions must be an array with one or more of the following: create, read, update, delete, deleteAll');
 		});
 
 		it('should require a specific type of action', function(){
@@ -1590,7 +1590,7 @@ describe('models',function(){
 					},
 					actions: ['foo']
 				});
-			}).should.throw('invalid action `foo` must be an array with one or more of the following: create, read, update, delete');
+			}).should.throw('invalid action `foo` must be an array with one or more of the following: create, read, update, delete, deleteAll');
 		});
 
 	});
