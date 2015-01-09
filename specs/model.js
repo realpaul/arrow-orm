@@ -392,7 +392,7 @@ describe('models',function(){
 				should(err).be.not.ok;
 				should(user).be.an.object;
 				should(user.name).be.equal('jeff');
-				should(user.getPrimaryKey()).be.equal(1);
+				should(user.getPrimaryKey()).be.ok;
 				next();
 			});
 		});
@@ -1297,7 +1297,7 @@ describe('models',function(){
 			User.create({name:'Jeff'}, function(err,user){
 				should(err).not.be.ok;
 				var serialized = JSON.stringify(user);
-				should(serialized).equal(JSON.stringify({ id: 1, name: 'Jeff' }));
+				should(serialized).equal(JSON.stringify({ id: user.getPrimaryKey(), name: 'Jeff' }));
 				var serializedPayload = JSON.stringify(user.toPayload());
 				should(serializedPayload).equal(JSON.stringify({ thename: 'Jeff' }));
 				var serializedWhere = JSON.stringify(User.translateKeysForPayload({ name: 1, id: 1, foo: 'bar' }));
@@ -1348,7 +1348,7 @@ describe('models',function(){
 			User.create({name:'Jeff'}, function(err,user){
 				should(err).not.be.ok;
 				var serialized = JSON.stringify(user);
-				should(serialized).equal(JSON.stringify({id:1,name:'Jeff',age:null}));
+				should(serialized).equal(JSON.stringify({id:user.getPrimaryKey(),name:'Jeff',age:null}));
 				callback();
 			});
 		});
