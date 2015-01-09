@@ -1300,6 +1300,8 @@ describe('models',function(){
 				should(serialized).equal(JSON.stringify({ id: 1, name: 'Jeff' }));
 				var serializedPayload = JSON.stringify(user.toPayload());
 				should(serializedPayload).equal(JSON.stringify({ thename: 'Jeff' }));
+				var serializedWhere = JSON.stringify(User.translateKeysForPayload({ name: 1 }));
+				should(serializedWhere).equal(JSON.stringify({ thename: 1 }));
 				callback();
 			});
 
