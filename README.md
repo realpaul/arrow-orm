@@ -1,6 +1,6 @@
 # API Builder ORM [![Build Status](https://magnum.travis-ci.com/appcelerator/api-orm.svg?token=xjwxUDk3aUJaLhguTqyB&branch=master)](https://magnum.travis-ci.com/appcelerator/api-orm)
 
-Object relational mapping (ORM) framework for [API Builder](https://github.com/appcelerator/api).
+Object relational mapping (ORM) framework for [API Builder](https://github.com/appcelerator/apibuilder).
 
 > This software is pre-release and not yet ready for usage.  Please don't use this just yet while we're working through testing and finishing it up. Once it's ready, we'll make an announcement about it.
 
