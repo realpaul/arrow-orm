@@ -445,10 +445,8 @@ describe('models',function(){
 				should(err).not.be.ok;
 				should(result).be.an.Object;
 				should(result).have.length(1);
-				should(result.at(0)).be.an.Object;
-				should(result.at(0).value()).be.an.Object;
-				should(result.first()).be.an.Object;
-				should(result.first().name).be.equal('jeff');
+				should(result[0]).be.an.Object;
+				should(result[0].name).be.equal('jeff');
 				next();
 			});
 		});
@@ -467,9 +465,8 @@ describe('models',function(){
 				should(err).not.be.ok;
 				should(result).be.an.Object;
 				should(result).have.length(1);
-				should(result.at(0)).be.an.Object;
-				should(result.first()).be.an.Object;
-				should(result.first().name).be.equal('jeff');
+				should(result[0]).be.an.Object;
+				should(result[0].name).be.equal('jeff');
 				next();
 			});
 		});
@@ -488,7 +485,7 @@ describe('models',function(){
 				should(err).not.be.ok;
 				should(result).be.an.Object;
 				should(result).have.length(1);
-				should(result.first().name).be.equal('jeff');
+				should(result[0].name).be.equal('jeff');
 				next();
 			});
 		});
@@ -592,7 +589,7 @@ describe('models',function(){
 		should(BirthdayAgeModel.fields).have.property('name');
 		should(BirthdayAgeModel.fields).have.property('age');
 		should(BirthdayAgeModel.fields).have.property('birthdate');
-		
+
 		var BirthdayModel = User.extend(orm.Model.define('BirthdayUser', {
 			fields: {
 				birthdate: {
@@ -673,44 +670,44 @@ describe('models',function(){
 			should(collection).be.an.object;
 			should(collection.length).be.equal(4);
 
-			var id = collection.first().getPrimaryKey();
-			var json = JSON.stringify(collection.first());
+			var id = collection[0].getPrimaryKey();
+			var json = JSON.stringify(collection[0]);
 			var _user = _.merge({id:id},users[0]);
 			should(json).be.equal(JSON.stringify(_user));
 
-			json = JSON.stringify(collection.at(0));
+			json = JSON.stringify(collection[0]);
 			_user = _.merge({id:id},users[0]);
-			should(json).be.equal(JSON.stringify([_user]));
+			should(json).be.equal(JSON.stringify(_user));
 
-			var inspect = util.inspect(collection.first());
+			var inspect = util.inspect(collection[0]);
 			should(inspect).be.equal(util.inspect(_user));
 
-			inspect = util.inspect(collection.at(0));
-			should(inspect).be.equal(util.inspect([_user]));
+			inspect = util.inspect(collection[0]);
+			should(inspect).be.equal(util.inspect(_user));
 
-			var result = collection.sortBy('age').first();
+			var result = _.sortBy(collection, 'age')[0];
 
 			should(result).be.an.object;
 			should(result.name).be.equal('Jenna');
 
-			result = collection.sortBy('-age').first();
+			result = _.sortBy(collection, '-age')[0];
 
 			should(result).be.an.object;
 			should(result.name).be.equal('Jeff');
 
-			result = collection.max('age').value();
+			result = _.max(collection, 'age');
 			should(result).be.an.object;
 			should(result.name).be.equal('Jeff');
 
-			result = collection.min('age').value();
+			result = _.min(collection, 'age');
 			should(result).be.an.object;
 			should(result.name).be.equal('Jenna');
 
-			result = collection.where({'age':12}).first();
+			result = _.where(collection, {'age':12})[0];
 			should(result).be.an.object;
 			should(result.name).be.equal('Jack');
 
-			result = collection.find(function(value){
+			result = _.find(collection, function(value){
 				return value.age > 12 && value.age < 18;
 			});
 
@@ -987,7 +984,6 @@ describe('models',function(){
 
 		var model = User.instance({name:'bar'},true);
 		var collection = new orm.Collection(User, model);
-		should(collection.at(0).value()[0]).be.equal(model);
 		should(collection[0]).be.equal(model);
 		should(collection.get(0)).be.equal(model);
 	});
