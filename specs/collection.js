@@ -40,6 +40,11 @@ describe('collections', function () {
 				var c = new Collection(null, ['a', 'b', 'c', 1, 2, 3]);
 			}).throw();
 		});
+
+		it('should be an instance of an array', function () {
+			var c = new Collection();
+			should(c).be.an.Array;
+		});
 	});
 
 	describe('length', function () {
@@ -128,9 +133,6 @@ describe('collections', function () {
 			var c = new Collection(null, createInstances());
 			should(c[1000]).equal(undefined);
 		});
-	});
-
-	describe('inspect', function () {
 	});
 
 	describe('toJSON', function () {
