@@ -1,6 +1,6 @@
 {
 	"name": "api-orm",
-	"version": "0.0.40",
+	"version": "0.0.41",
 	"description": "API Builder ORM",
 	"main": "index.js",
 	"license": "Apache-2",
