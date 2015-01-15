@@ -116,17 +116,9 @@ user.name = 'Rick';
 
 If the Connector returns more than one Model instance, it will return it as a Collection, which is a container of Model instances.
 
-A collection acts like an array but has additional helper functions for manipulating the collection.
+A collection is an array and has additional helper functions for manipulating the collection.
 
 You can get the length of the collection with the `length` property.
-
-The collection extends the Lodash instance and provides access to all the [Collection methods](http://lodash.com/docs#_) such as `at`, `min`, `max`, `value`, `sortBy`, etc.
-
-For example, do search for all models which have the `age` field with the value `12`, you could write:
-
-```javascript
-var result = collection.where({'age':12}).first();
-```
 
 ### Connector
 
