@@ -1086,18 +1086,26 @@ describe('models',function(){
 			should(_name).be.equal('name');
 		});
 
-		it("should pass instance to getter", function(){
+		it("should pass instance to getter", function() {
 			var Connector = new orm.MemoryConnector();
 
-			var _instance;
+			var _instance,
+				_customInstance;
 
-			var User = orm.Model.define('user',{
+			var User = orm.Model.define('user', {
 				fields: {
 					name: {
 						type: String
 					},
 					bar: {
 						type: String
+					},
+					qux: {
+						type: String,
+						custom: true,
+						get: function(value, name, instance) {
+							_customInstance = instance;
+						}
 					}
 				},
 				mappings: {
@@ -1110,10 +1118,12 @@ describe('models',function(){
 				connector: Connector
 			});
 
-			var model = User.instance({name:'foo/bar', bar:'foo'},true);
+			var model = User.instance({ name: 'foo/bar', bar: 'foo' }, true);
 			var obj = model.toJSON();
 			should(_instance).be.ok;
-			should(_instance).be.an.object;
+			should(_customInstance).be.ok;
+			should(_instance).equal(_customInstance);
+			should(_instance).be.an.Object;
 			should(_instance.get('bar')).be.equal('foo');
 		});
 
