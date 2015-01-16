@@ -1,6 +1,6 @@
 {
 	"name": "api-orm",
-	"version": "0.0.43",
+	"version": "0.0.44",
 	"description": "API Builder ORM",
 	"main": "index.js",
 	"license": "Apache-2",
@@ -16,7 +16,8 @@
 		"async": "^0.9.0",
 		"chalk": "^0.5.1",
 		"debug": "^2.1.1",
-		"lodash": "^2.4.1"
+		"lodash": "^2.4.1",
+		"pluralize": "^1.0.3"
 	},
 	"devDependencies": {
 		"grunt": "^0.4.5",
