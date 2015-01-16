@@ -1036,6 +1036,17 @@ describe('models',function(){
 		}).should.throw('cannot set read-only field: email');
 	});
 
+	it('should be able to coerce numbers',function(){
+		var User = orm.Model.define('user', {
+			fields: { age: { type: Number } },
+			connector: 'memory'
+		});
+		var instance = User.instance({ age: 10 });
+		should(instance.get('age')).be.equal(10);
+		instance = User.instance({ age: '10' });
+		should(instance.get('age')).be.equal(10);
+	});
+
 	it('should be able to get model from instance',function(){
 
 		var Connector = new orm.MemoryConnector();
