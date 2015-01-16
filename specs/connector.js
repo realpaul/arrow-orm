@@ -202,24 +202,24 @@ describe('connectors',function(){
 		var model = orm.Model.define('user',{
 			connector: connector
 		});
-		
+
 		function noop() { }
-		
+
 		shouldBe = { where: {}, per_page: 10, limit: 10, page: 1, skip: 0 };
 		model.query({}, noop);
-		
+
 		// Limit and per_page should be interchangeable.
 		shouldBe = { per_page: 1, limit: 1, page: 1, skip: 0 };
 		model.query({ per_page: 1 }, noop);
 		shouldBe = { per_page: 2, limit: 2, page: 1, skip: 0 };
 		model.query({ limit: 2 }, noop);
-		
+
 		// Page should translate to skip properly.
 		shouldBe = { per_page: 3, limit: 3, page: 3, skip: 6 };
 		model.query({ per_page: 3, page: 3 }, noop);
 		shouldBe = { per_page: 4, limit: 4, page: 4, skip: 12 };
 		model.query({ skip: 12, limit: 4 }, noop);
-		
+
 	});
 
 	describe("#lifecycle", function(){
