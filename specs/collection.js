@@ -141,6 +141,12 @@ describe('collections', function () {
 			var json = c.toJSON();
 			should(json).be.an.Array;
 			should(json.length).equal(3);
+			should(json).not.have.property('model');
+			should(json).not.have.property('toJSON');
+			should(json).not.have.property('toArray');
+			should(json).not.have.property('get');
+			should(json).not.have.property('add');
+			should(json).not.have.property('set');
 		});
 	});
 
