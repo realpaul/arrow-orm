@@ -1047,6 +1047,37 @@ describe('models',function(){
 		should(instance.get('age')).be.equal(10);
 	});
 
+	it('should be able to coerce booleans',function(){
+		var User = orm.Model.define('user', {
+			fields: { fancy: { type: Boolean } },
+			connector: 'memory'
+		});
+
+		// True coercion.
+		var instance = User.instance({ fancy: true });
+		should(instance.get('fancy')).be.equal(true);
+		instance = User.instance({ fancy: 'true' });
+		should(instance.get('fancy')).be.equal(true);
+		instance = User.instance({ fancy: '1' });
+		should(instance.get('fancy')).be.equal(true);
+		instance = User.instance({ fancy: 1 });
+		should(instance.get('fancy')).be.equal(true);
+
+		// False coercion.
+		instance = User.instance({ fancy: false });
+		should(instance.get('fancy')).be.equal(false);
+		instance = User.instance({ fancy: 'false' });
+		should(instance.get('fancy')).be.equal(false);
+		instance = User.instance({ fancy: '0' });
+		should(instance.get('fancy')).be.equal(false);
+		instance = User.instance({ fancy: 0 });
+		should(instance.get('fancy')).be.equal(false);
+
+		// Defaults to null when not provided or required.
+		instance = User.instance({});
+		should(instance.get('fancy')).be.equal(null);
+	});
+
 	it('should be able to get model from instance',function(){
 
 		var Connector = new orm.MemoryConnector();
