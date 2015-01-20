@@ -575,6 +575,22 @@ describe('models',function(){
 		should(AgeModel.fields.name).be.ok;
 		should(AgeModel.fields.age).be.ok;
 
+		// test extending fields based on name
+		
+		var RenamedAgeModel = User.extend('RenamedAgeUser',{
+			fields: {
+				NewName: { type: String, name: 'name' },
+				NewAge: { type: Number }
+			}
+		});
+
+		should(RenamedAgeModel).be.an.Object;
+		should(RenamedAgeModel.connector).be.an.Object;
+		should(RenamedAgeModel.connector).be.equal(Connector);
+		should(RenamedAgeModel.fields.NewName).be.ok;
+		should(RenamedAgeModel.fields.NewAge).be.ok;
+		should(RenamedAgeModel.fields.name).be.not.ok;
+
 		// test extending an extended model from another model
 
 		var BirthdayAgeModel = AgeModel.extend(orm.Model.define('BirthdayAgeUser', {
