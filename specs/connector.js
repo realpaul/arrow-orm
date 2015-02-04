@@ -222,6 +222,36 @@ describe('connectors',function(){
 
 	});
 
+	it('should translate sel and unsel', function() {
+		var shouldBe;
+		var MyConnector = orm.Connector.extend({
+			name: 'testing',
+			query: function(Model, options, callback) {
+				if (shouldBe.sel) {
+					should(options.sel).eql(shouldBe.sel);
+				}
+				if (shouldBe.unsel) {
+					should(options.unsel).eql(shouldBe.unsel);
+				}
+				callback(null, {});
+			}
+		});
+		var connector = new MyConnector();
+		var model = orm.Model.define('user',{
+			connector: connector
+		});
+
+		function noop() { }
+
+		shouldBe = { sel: { name: 1 } };
+		model.query({ sel: { name: 1 } }, noop);
+		model.query({ sel: 'name' }, noop);
+		
+		shouldBe = { sel: { name: 1, age: 1 } };
+		model.query({ sel: { name: 1, age: 1 } }, noop);
+		model.query({ sel: 'name,age' }, noop);
+	});
+
 	describe("#lifecycle", function(){
 
 		it("should support no lifecycle methods", function(callback){
