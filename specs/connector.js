@@ -252,6 +252,47 @@ describe('connectors',function(){
 		model.query({ sel: 'name,age' }, noop);
 	});
 
+	it('should translate $like', function(done) {
+		var MyConnector = orm.Connector.extend({
+			name: 'testing',
+			translateWhereRegex: true,
+			query: function(Model, options, callback) {
+				should(options.where).be.ok;
+				should(options.where.name).be.ok;
+				should(options.where.name.$regex).be.ok;
+				should(options.where.name.$regex).eql('^Hello.*$');
+				done();
+			}
+		});
+		var connector = new MyConnector();
+		var model = orm.Model.define('user', {
+			connector: connector
+		});
+
+		function noop() { }
+
+		model.query({ name: { $like: 'Hello%' } }, noop);
+	});
+
+	it('API-398: should handle skip: 0 properly', function() {
+		var MyConnector = orm.Connector.extend({
+				name: 'testing',
+				query: function(Model, options, callback) {
+					should(options.skip).eql(0);
+					should(options.where).be.not.ok;
+					callback(null, {});
+				}
+			}),
+			connector = new MyConnector(),
+			model = orm.Model.define('user', {
+				connector: connector
+			});
+
+		function noop() { }
+
+		model.query({ skip: 0 }, noop);
+	});
+
 	describe("#lifecycle", function(){
 
 		it("should support no lifecycle methods", function(callback){
