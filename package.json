@@ -1,32 +1,33 @@
 {
-	"name": "api-orm",
-	"version": "0.2.6",
-	"description": "API Builder ORM",
-	"main": "index.js",
-	"license": "Apache-2",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/appcelerator/api-orm"
-	},
-	"scripts": {
-		"test": "grunt"
-	},
-	"author": "Jeff Haynie",
-	"dependencies": {
-		"async": "^0.9.0",
-		"chalk": "^0.5.1",
-		"debug": "^2.1.1",
-		"lodash": "^2.4.1",
-		"pluralize": "^1.0.3"
-	},
-	"devDependencies": {
-		"grunt": "^0.4.5",
-		"grunt-contrib-clean": "^0.6.0",
-		"grunt-contrib-jshint": "^0.10.0",
-		"grunt-env": "^0.4.2",
-		"grunt-mocha-test": "^0.12.6",
-		"istanbul": "^0.3.5",
-		"mocha": "^2.1.0",
-		"should": "^4.6.0"
-	}
+  "name": "api-orm",
+  "version": "0.2.6",
+  "description": "API Builder ORM",
+  "main": "index.js",
+  "license": "Apache-2",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/appcelerator/api-orm"
+  },
+  "scripts": {
+    "test": "grunt"
+  },
+  "author": "Jeff Haynie",
+  "dependencies": {
+    "async": "^0.9.0",
+    "chalk": "^0.5.1",
+    "debug": "^2.1.1",
+    "lodash": "^2.4.1",
+    "mingo": "^0.3.1",
+    "pluralize": "^1.0.3"
+  },
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-clean": "^0.6.0",
+    "grunt-contrib-jshint": "^0.10.0",
+    "grunt-env": "^0.4.2",
+    "grunt-mocha-test": "^0.12.6",
+    "istanbul": "^0.3.5",
+    "mocha": "^2.1.0",
+    "should": "^4.6.0"
+  }
 }

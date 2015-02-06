@@ -564,4 +564,75 @@ describe('connectors',function(){
 		});
 	});
 
+	describe('memory', function(){
+
+		it('should support queries', function(done){
+			var MemoryConnector = require('../lib/connector/memorydb'),
+				connector = new MemoryConnector(),
+				User = orm.Model.define('user',{
+					fields: {
+						name: { type:String },
+					},
+					connector: connector
+				});
+
+			async.series([
+				function(cb) {
+					User.create({name:'Jeff'},cb);
+				},
+				function(cb) {
+					User.create({name:'Nolan'},cb);
+				},
+				function(cb) {
+					User.create({name:'Dawson'},cb);
+				},
+				function(cb) {
+					User.create({name:'Tony'},cb);
+				},
+				function(cb) {
+					User.query({where:{name:'Jeff'}}, function(err,result){
+						should(err).not.be.ok;
+						should(result).have.length(1);
+						should(result[0].get('name')).be.equal('Jeff');
+						cb();
+					});
+				},
+				function(cb) {
+					User.query({limit:1}, function(err,result){
+						should(err).not.be.ok;
+						should(result).have.length(1);
+						cb();
+					});
+				},
+				function(cb) {
+					User.query({limit:1, sort:{name:-1}}, function(err,result){
+						should(err).not.be.ok;
+						should(result).have.length(1);
+						should(result[0].get('name')).be.equal('Tony');
+						cb();
+					});
+				},
+				function(cb) {
+					User.query({limit:1, sort:{name:1}}, function(err,result){
+						should(err).not.be.ok;
+						should(result).have.length(1);
+						should(result[0].get('name')).be.equal('Dawson');
+						cb();
+					});
+				},
+				function(cb) {
+					User.query({where: {$or: [{name:'Jeff'},{name:'Nolan'}]}, sort:{name:1}}, function(err,result){
+						should(err).not.be.ok;
+						should(result).have.length(2);
+						should(result[0].get('name')).be.equal('Jeff');
+						should(result[1].get('name')).be.equal('Nolan');
+						cb();
+					});
+				}
+
+			], done);
+		});
+
+	});
+
 });
