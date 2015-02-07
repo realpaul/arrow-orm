@@ -1,12 +1,12 @@
 {
-  "name": "api-orm",
-  "version": "0.2.7",
-  "description": "API Builder ORM",
+  "name": "arrow-orm",
+  "version": "0.2.8",
+  "description": "Arrow Builder ORM",
   "main": "index.js",
-  "license": "Apache-2",
+  "license": "Appcelerator Commercial",
   "repository": {
     "type": "git",
-    "url": "https://github.com/appcelerator/api-orm"
+    "url": "https://github.com/appcelerator/arrow-orm"
   },
   "scripts": {
     "test": "grunt"
