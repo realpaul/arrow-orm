@@ -1426,6 +1426,37 @@ describe('models',function(){
 			}).should.throw('required field value missing: name');
 		});
 
+		it('should support removing fields not contained in data',function(){
+			var Connector = new orm.MemoryConnector();
+
+			var User = orm.Model.define('user',{
+				fields: {
+					name: {
+						type: String,
+						required: true
+					},
+					email: {
+						type: String
+					}
+				},
+				connector: Connector
+			});
+
+			var user1 = User.instance({name:'jeff',email:'foo@example.com'},true);
+			should(user1.get('name')).be.equal('jeff');
+			should(user1.get('email')).be.equal('foo@example.com');
+			user1 = user1.toJSON();
+			should(user1).have.property('name','jeff');
+			should(user1).have.property('email','foo@example.com');
+
+			var user2 = User.instance({name:'jeff'},true);
+			should(user2.get('name')).be.equal('jeff');
+			should(user2.get('email')).be.undefined;
+			user2 = user2.toJSON();
+			should(user2).have.property('name','jeff');
+			should(user2).not.have.property('email','foo@example.com');
+		});
+
 	});
 
 	describe('#serialization',function(){
