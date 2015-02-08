@@ -1443,16 +1443,20 @@ describe('models',function(){
 			});
 
 			var user1 = User.instance({name:'jeff',email:'foo@example.com'},true);
+			user1.setPrimaryKey(1);
 			should(user1.get('name')).be.equal('jeff');
 			should(user1.get('email')).be.equal('foo@example.com');
 			user1 = user1.toJSON();
+			should(user1).have.property('id',1);
 			should(user1).have.property('name','jeff');
 			should(user1).have.property('email','foo@example.com');
 
 			var user2 = User.instance({name:'jeff'},true);
+			user2.setPrimaryKey(2);
 			should(user2.get('name')).be.equal('jeff');
 			should(user2.get('email')).be.undefined;
 			user2 = user2.toJSON();
+			should(user2).have.property('id',2);
 			should(user2).have.property('name','jeff');
 			should(user2).not.have.property('email','foo@example.com');
 		});
