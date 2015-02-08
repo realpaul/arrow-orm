@@ -89,6 +89,58 @@ describe('models',function(){
 
 	});
 
+	it('should be able to get and set instance changes',function(callback){
+		var Connector = new orm.MemoryConnector();
+		var User = orm.Model.define('user',{
+			fields: {
+				name: {
+					type: String,
+					default: 'Jeff'
+				},
+				age: {
+					type: Number,
+					default: 10
+				},
+				friends: {
+					type: Array
+				}
+			},
+			connector: Connector
+		});
+
+		User.create({friends:['Nolan']},function(err,instance){
+			should(err).be.not.ok;
+			should(instance).be.an.object;
+			should(instance.get('friends')).containEql('Nolan');
+			var friends = instance.get('friends');
+			friends.push('Neeraj');
+			should(instance._dirty).be.false;
+			User.update(instance, function(err,result){
+				should(err).not.be.ok;
+				should(result).be.an.object;
+				// since we added but didn't call update or set, won't mutate
+				should(result.get('friends')).not.containEql('Neeraj');
+				should(instance._dirty).be.false;
+				instance.set('friends',friends);
+				should(instance._dirty).be.true;
+				User.update(instance, function(err,result){
+					should(err).not.be.ok;
+					should(result).be.an.object;
+					// since we added but didn't call update or set, won't mutate
+					should(result.get('friends')).containEql('Neeraj');
+					should(instance._dirty).be.false;
+					instance.change('friends',['Dawson','Tony']);
+					should(instance._dirty).be.true;
+					should(instance.isUnsaved()).be.true;
+					should(instance.get('friends')).containEql('Dawson');
+					should(instance.get('friends')).containEql('Tony');
+					callback();
+				});
+			});
+		});
+
+	});
+
 	it('should be able to get payloads for servers',function(callback){
 		var Connector = new orm.MemoryConnector();
 		var User = orm.Model.define('user',{
@@ -358,7 +410,7 @@ describe('models',function(){
 		var preowned = Preowned.instance(data,true);
 		preowned.get('model').should.equal('Rick');
 		preowned.get('aircraftStatus').should.equal('in-flight');
-		preowned.get('cabinEntertainment').should.equal(data.cabinEntertainment);
+		preowned.get('cabinEntertainment').should.eql(data.cabinEntertainment);
 		preowned.get('cabinEntertainment').should.have.length(3);
 		preowned.get('cabinEntertainment')[0].should.have.property('feature',"DVD player (multi-region) / 15” LCD flat panel swing-out monitor");
 		preowned.get('cabinEntertainment')[1].should.have.property('feature',"Rosen View LX moving map program / Six Rosen 6.5” LCD monitors");
@@ -836,7 +888,8 @@ describe('models',function(){
 
 			user.save(function(err,result){
 				should(err).not.be.ok;
-				should(result).not.be.ok;
+				should(result).be.ok;
+				should(result).be.equal(user);
 				callback();
 			});
 
