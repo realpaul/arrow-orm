@@ -1370,6 +1370,7 @@ describe('models',function(){
 			});
 
 		});
+
 		it('should support field renaming on deserialization',function(){
 			var Connector = new orm.MemoryConnector();
 
@@ -1388,6 +1389,43 @@ describe('models',function(){
 			var serialized = JSON.stringify(user);
 			should(serialized).equal(JSON.stringify({name:'Jeff'}));
 		});
+
+		it('should support optional=false which is same as required=true',function(){
+			var Connector = new orm.MemoryConnector();
+
+			var User = orm.Model.define('user',{
+				fields: {
+					name: {
+						type: String,
+						optional: false
+					}
+				},
+				connector: Connector
+			});
+
+			(function(){
+				User.instance({});
+			}).should.throw('required field value missing: name');
+		});
+
+		it('should support required=true',function(){
+			var Connector = new orm.MemoryConnector();
+
+			var User = orm.Model.define('user',{
+				fields: {
+					name: {
+						type: String,
+						required: true
+					}
+				},
+				connector: Connector
+			});
+
+			(function(){
+				User.instance({});
+			}).should.throw('required field value missing: name');
+		});
+
 	});
 
 	describe('#serialization',function(){
