@@ -1516,6 +1516,82 @@ describe('models',function(){
 
 	});
 
+	describe('#distinct', function(){
+
+		it('should return distinct values', function(callback){
+			var Connector = new orm.MemoryConnector();
+
+			var User = orm.Model.define('user',{
+				fields: {
+					name: {
+						type: String,
+						required: true
+					},
+					age: {
+						type: Number,
+						required: true
+					}
+				},
+				connector: Connector
+			});
+
+			User.create({
+				name: 'Steve',
+				age: 50
+			}, function(err, user){
+				should(err).not.be.ok;
+				should(user).be.an.object;
+				should(user.name).eql('Steve');
+				should(user.age).eql(50);
+
+				User.create({
+					name: 'Steve',
+					age: 15
+				}, function(err, user){
+					should(err).not.be.ok;
+					should(user).be.an.object;
+					should(user.name).eql('Steve');
+					should(user.age).eql(15);
+
+					User.create({
+						name: 'Jack',
+						age: 50
+					}, function(err, user){
+						should(err).not.be.ok;
+						should(user).be.an.object;
+						should(user.name).eql('Jack');
+						should(user.age).eql(50);
+
+						User.distinct('name', {}, function(err, results){
+							should(err).be.not.ok;
+
+							should(results).be.an.Array.with.length(2);
+							should(results).containEql('Steve');
+							should(results).containEql('Jack');
+
+							User.distinct('age', {
+								where:{
+									name: 'Jack'
+								}
+							}, function(err, results){
+								should(err).be.not.ok;
+
+								should(results).be.an.Array.with.length(1);
+								should(results).containEql(50);
+
+								callback();
+							});
+						});
+
+					});
+
+				});
+
+			});
+		});
+
+	});
+
 	describe('#serialization',function(){
 
 		it('should serialize all fields',function(callback){

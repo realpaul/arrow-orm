@@ -153,7 +153,7 @@ describe('connectors',function(){
 			fields: {
 				name: {
 					type: String,
-					default: 'Jeff',
+					default: 'Jeff'
 				}
 			},
 			connector: connector
