@@ -189,108 +189,155 @@ describe('connectors',function(){
 
 	});
 
-	it('should translate query page, per_page, skip and limit', function() {
-		var shouldBe;
-		var MyConnector = orm.Connector.extend({
-			name: 'testing',
-			query: function(Model, options, callback) {
-				should(options).eql(shouldBe);
-				callback(null, {});
-			}
-		});
-		var connector = new MyConnector();
-		var model = orm.Model.define('user',{
-			connector: connector
-		});
+	describe("#query", function(){
 
-		function noop() { }
-
-		shouldBe = { where: {}, per_page: 10, limit: 10, page: 1, skip: 0 };
-		model.query({}, noop);
-
-		// Limit and per_page should be interchangeable.
-		shouldBe = { per_page: 1, limit: 1, page: 1, skip: 0 };
-		model.query({ per_page: 1 }, noop);
-		shouldBe = { per_page: 2, limit: 2, page: 1, skip: 0 };
-		model.query({ limit: 2 }, noop);
-
-		// Page should translate to skip properly.
-		shouldBe = { per_page: 3, limit: 3, page: 3, skip: 6 };
-		model.query({ per_page: 3, page: 3 }, noop);
-		shouldBe = { per_page: 4, limit: 4, page: 4, skip: 12 };
-		model.query({ skip: 12, limit: 4 }, noop);
-
-	});
-
-	it('should translate sel and unsel', function() {
-		var shouldBe;
-		var MyConnector = orm.Connector.extend({
-			name: 'testing',
-			query: function(Model, options, callback) {
-				if (shouldBe.sel) {
-					should(options.sel).eql(shouldBe.sel);
-				}
-				if (shouldBe.unsel) {
-					should(options.unsel).eql(shouldBe.unsel);
-				}
-				callback(null, {});
-			}
-		});
-		var connector = new MyConnector();
-		var model = orm.Model.define('user',{
-			connector: connector
-		});
-
-		function noop() { }
-
-		shouldBe = { sel: { name: 1 } };
-		model.query({ sel: { name: 1 } }, noop);
-		model.query({ sel: 'name' }, noop);
-		
-		shouldBe = { sel: { name: 1, age: 1 } };
-		model.query({ sel: { name: 1, age: 1 } }, noop);
-		model.query({ sel: 'name,age' }, noop);
-	});
-
-	it('should translate $like', function(done) {
-		var MyConnector = orm.Connector.extend({
-			name: 'testing',
-			translateWhereRegex: true,
-			query: function(Model, options, callback) {
-				should(options.where).be.ok;
-				should(options.where.name).be.ok;
-				should(options.where.name.$regex).be.ok;
-				should(options.where.name.$regex).eql('^Hello.*$');
-				done();
-			}
-		});
-		var connector = new MyConnector();
-		var model = orm.Model.define('user', {
-			connector: connector
-		});
-
-		function noop() { }
-
-		model.query({ name: { $like: 'Hello%' } }, noop);
-	});
-
-	it('API-398: should handle skip: 0 properly', function() {
-		var MyConnector = orm.Connector.extend({
+		it('should translate query page, per_page, skip and limit', function() {
+			var shouldBe;
+			var MyConnector = orm.Connector.extend({
 				name: 'testing',
 				query: function(Model, options, callback) {
-					should(options.skip).eql(0);
-					should(options.where).be.not.ok;
+					should(options).eql(shouldBe);
 					callback(null, {});
 				}
-			}),
-			connector = new MyConnector(),
-			model = orm.Model.define('user', {
+			});
+			var connector = new MyConnector();
+			var model = orm.Model.define('user',{
 				connector: connector
 			});
 
-		function noop() { }
+			function noop() { }
 
-		model.query({ skip: 0 }, noop);
+			shouldBe = { where: {}, per_page: 10, limit: 10, page: 1, skip: 0 };
+			model.query({}, noop);
+
+			// Limit and per_page should be interchangeable.
+			shouldBe = { per_page: 1, limit: 1, page: 1, skip: 0 };
+			model.query({ per_page: 1 }, noop);
+			shouldBe = { per_page: 2, limit: 2, page: 1, skip: 0 };
+			model.query({ limit: 2 }, noop);
+
+			// Page should translate to skip properly.
+			shouldBe = { per_page: 3, limit: 3, page: 3, skip: 6 };
+			model.query({ per_page: 3, page: 3 }, noop);
+			shouldBe = { per_page: 4, limit: 4, page: 4, skip: 12 };
+			model.query({ skip: 12, limit: 4 }, noop);
+
+		});
+
+		it('should translate sel and unsel', function() {
+			var shouldBe;
+			var MyConnector = orm.Connector.extend({
+				name: 'testing',
+				query: function(Model, options, callback) {
+					if (shouldBe.sel) {
+						should(options.sel).eql(shouldBe.sel);
+					}
+					if (shouldBe.unsel) {
+						should(options.unsel).eql(shouldBe.unsel);
+					}
+					callback(null, {});
+				}
+			});
+			var connector = new MyConnector();
+			var model = orm.Model.define('user',{
+				connector: connector
+			});
+
+			function noop() { }
+
+			shouldBe = { sel: { name: 1 } };
+			model.query({ sel: { name: 1 } }, noop);
+			model.query({ sel: 'name' }, noop);
+
+			shouldBe = { sel: { name: 1, age: 1 } };
+			model.query({ sel: { name: 1, age: 1 } }, noop);
+			model.query({ sel: 'name,age' }, noop);
+		});
+
+		it('should translate $like', function(done) {
+			var MyConnector = orm.Connector.extend({
+				name: 'testing',
+				translateWhereRegex: true,
+				query: function(Model, options, callback) {
+					should(options.where).be.ok;
+					should(options.where.name).be.ok;
+					should(options.where.name.$regex).be.ok;
+					should(options.where.name.$regex).eql('^Hello.*$');
+					done();
+				}
+			});
+			var connector = new MyConnector();
+			var model = orm.Model.define('user', {
+				connector: connector
+			});
+
+			function noop() { }
+
+			model.query({ name: { $like: 'Hello%' } }, noop);
+		});
+
+		it('API-398: should handle skip: 0 properly', function() {
+			var MyConnector = orm.Connector.extend({
+					name: 'testing',
+					query: function(Model, options, callback) {
+						should(options.skip).eql(0);
+						should(options.where).be.not.ok;
+						callback(null, {});
+					}
+				}),
+				connector = new MyConnector(),
+				model = orm.Model.define('user', {
+					connector: connector
+				});
+
+			function noop() { }
+
+			model.query({ skip: 0 }, noop);
+		});
+
+		it('should return instance instead of collection when limit=1', function(done) {
+			var MemoryConnector = require('../lib/connector/memorydb'),
+				connector = new MemoryConnector(),
+				model = orm.Model.define('user', {
+					fields: {
+						name: {type: String}
+					},
+					connector: connector
+				});
+
+			model.query({ limit: 1 }, function(err,result){
+				should(err).not.be.ok;
+				should(result).be.an.object;
+				should(result).not.be.an.array;
+				should(result).be.empty;
+
+				model.create({name:'jeff'}, function(err,instance){
+					should(err).not.be.ok;
+					should(instance).be.an.object;
+					should(instance.get('name')).be.equal('jeff');
+					model.query({limit:1}, function(err,result){
+						should(err).not.be.ok;
+						should(result).be.an.object;
+						should(result).not.be.an.array;
+						should(result).not.be.empty;
+						should(result.get('name')).be.equal('jeff');
+						should(result.getPrimaryKey()).be.greaterThan(0);
+
+						model.query({limit:10}, function(err,result){
+							should(err).not.be.ok;
+							should(result).be.an.object;
+							should(result).be.an.array;
+							should(result).not.be.empty;
+							should(result).have.length(1);
+							should(result[0].get('name')).be.equal('jeff');
+							should(result[0].getPrimaryKey()).be.greaterThan(0);
+							done();
+						});
+					});
+				});
+			});
+		});
+
 	});
 
 	describe("#lifecycle", function(){
@@ -600,23 +647,23 @@ describe('connectors',function(){
 				function(cb) {
 					User.query({limit:1}, function(err,result){
 						should(err).not.be.ok;
-						should(result).have.length(1);
+						should(result).be.an.object;
+						should(result).not.be.an.array;
+						should(result).not.be.empty;
 						cb();
 					});
 				},
 				function(cb) {
 					User.query({limit:1, sort:{name:-1}}, function(err,result){
 						should(err).not.be.ok;
-						should(result).have.length(1);
-						should(result[0].get('name')).be.equal('Tony');
+						should(result.get('name')).be.equal('Tony');
 						cb();
 					});
 				},
 				function(cb) {
 					User.query({limit:1, sort:{name:1}}, function(err,result){
 						should(err).not.be.ok;
-						should(result).have.length(1);
-						should(result[0].get('name')).be.equal('Dawson');
+						should(result.get('name')).be.equal('Dawson');
 						cb();
 					});
 				},
