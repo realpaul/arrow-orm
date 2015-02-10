@@ -1473,14 +1473,13 @@ describe('models',function(){
 				}
 
 				User.findAndModify({
-					upsert: true,
 					where: {
 						name: "Jason"
 					}
 				}, {
 					age: 30,
 					name: "Jerry"
-				}, function(err/*, result*/){
+				}, { upsert: true }, function(err/*, result*/){
 					if(err){
 						return callback(err);
 					}
@@ -1588,13 +1587,12 @@ describe('models',function(){
 				}
 
 				User.findAndModify({
-					new: true,
 					where: {
 						name: "George"
 					}
 				}, {
 					age: 30
-				}, function(err, result){
+				}, { new: true }, function(err, result){
 					if(err){
 						return callback(err);
 					}
