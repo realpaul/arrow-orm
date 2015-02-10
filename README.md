@@ -51,6 +51,8 @@ The model has several instance methods:
 | find          | find one or more Models                                          |
 | findOne       | find one Model from a primary key                                |
 | findAll       | find all Model                                                   |
+| findAndModify | find a Model from a query and modify values                      |
+| distinct      | find unique values for a Model field name                        |
 
 A model can have custom functions by defining them in the definition as a property.  They will automatically be available on the model instance.
 
