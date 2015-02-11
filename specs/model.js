@@ -1007,6 +1007,46 @@ describe('models',function(){
 		should(values).not.have.property('email');
 	});
 
+	it('should return readonly fields in values when dirtyOnly flag is set',function(){
+
+		var Connector = new orm.MemoryConnector();
+
+		var User = orm.Model.define('user',{
+			fields: {
+				name: {
+					type: String,
+					required: false
+				},
+				email: {
+					type: String,
+					readonly: true
+				}
+			},
+			connector: Connector
+		});
+
+		var model = User.instance({name:'bar',email:'test@example.com'},true);
+
+		// nothing dirty
+		var values = model.values(true);
+		should(values).be.an.object;
+		should(values).not.have.property('name','bar');
+		should(values).not.have.property('email','test@example.com');
+
+		model.set('name','foo');
+		should(function(){
+			model.set('email','what@example.com');
+		}).throw('cannot set read-only field: email');
+		
+		// should not through if force is called (last arg)
+		model.set('email','hello@example.com',true);
+
+		values = model.values(true);
+		should(values).be.an.object;
+		should(values).have.property('name','foo');
+		should(values).have.property('email','hello@example.com');
+	});
+
 	it('should not return toArray from collection',function(){
 
 		var Connector = new orm.MemoryConnector();
