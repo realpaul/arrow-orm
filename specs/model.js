@@ -1821,7 +1821,7 @@ describe('models',function(){
 						should(user.name).eql('Jack');
 						should(user.age).eql(50);
 
-						User.distinct('name', {}, function(err, results){
+						User.distinct('name', {sel:'name'}, function(err, results){
 							should(err).be.not.ok;
 
 							should(results).be.an.Array.with.length(2);
@@ -1831,14 +1831,33 @@ describe('models',function(){
 							User.distinct('age', {
 								where:{
 									name: 'Jack'
-								}
+								},
+								sel: 'age'
 							}, function(err, results){
 								should(err).be.not.ok;
 
 								should(results).be.an.Array.with.length(1);
 								should(results).containEql(50);
 
-								callback();
+								User.distinct('age', {
+									where:{
+										name: 'Jack'
+									}
+								}, function(err, results){
+									should(err).be.not.ok;
+
+									should(results).be.an.Array.with.length(1);
+									should(results[0].get('name')).be.eql('Jack');
+									should(results[0].get('age')).be.eql(50);
+
+									should(results[0]).have.property('name','Jack');
+									should(results[0]).have.property('age',50);
+
+									should(results instanceof orm.Collection).not.be.true;
+									should(results instanceof Array).be.true;
+
+									callback();
+								});
 							});
 						});
 
@@ -2374,7 +2393,7 @@ describe('models',function(){
 						should(user.name).eql('Jack');
 						should(user.age).eql(50);
 
-						User.distinct('name', {}, function(err, results){
+						User.distinct('name', {sel:'name'}, function(err, results){
 							should(err).be.not.ok;
 
 							should(results).be.an.Array.with.length(2);

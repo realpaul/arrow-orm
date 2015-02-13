@@ -319,7 +319,6 @@ describe('connectors',function(){
 						should(err).not.be.ok;
 						should(result).be.an.object;
 						should(result).not.be.an.array;
-						should(result).not.be.empty;
 						should(result.get('name')).be.equal('jeff');
 						should(result.getPrimaryKey()).be.greaterThan(0);
 
@@ -649,7 +648,7 @@ describe('connectors',function(){
 						should(err).not.be.ok;
 						should(result).be.an.object;
 						should(result).not.be.an.array;
-						should(result).not.be.empty;
+						should(result.toJSON()).not.be.empty;
 						cb();
 					});
 				},

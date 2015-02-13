@@ -160,43 +160,23 @@ describe('collections', function () {
 		});
 	});
 
-	describe('events', function () {
-		it('should register and emit events', function (done) {
-			this.timeout(1000);
-
-			var c = new Collection(null, []);
-
-			c.on('foo', function () {
-				done();
-			});
-
-			c.emit('foo');
+	describe('instanceof', function() {
+		it('should be an array', function() {
+			var c = new Collection();
+			should(c).be.an.array;
+			should(c.length).be.equal(0);
 		});
-
-		it('should remove listener', function (done) {
-			var c = new Collection(null, []);
-
-			function cb() {
-				done(new Error('foo should have been removed'));
-			}
-
-			c.on('foo', cb);
-			c.removeListener('foo', cb);
-			c.emit('foo');
-
-			done();
+		it('should be instanceof array', function() {
+			var c = new Collection();
+			should(c instanceof Array).be.true;
 		});
-
-		it('should remove all listeners', function (done) {
-			var c = new Collection(null, []);
-
-			c.on('foo', function () {
-				done(new Error('foo should have been removed'));
-			});
-			c.removeAllListeners('foo');
-			c.emit('foo');
-
-			done();
+		it('should be instanceof Collection', function() {
+			var c = new Collection();
+			should(c instanceof Collection).be.true;
+		});
+		it('should be instanceof Collection', function() {
+			var c = new Collection();
+			should(Array.isArray(c)).be.true;
 		});
 	});
 
