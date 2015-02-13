@@ -53,6 +53,7 @@ The model has several instance methods:
 | findAll       | find all Model                                                   |
 | findAndModify | find a Model from a query and modify values                      |
 | distinct      | find unique values for a Model field name                        |
+| count         | find count of a query                                            |
 
 A model can have custom functions by defining them in the definition as a property.  They will automatically be available on the model instance.
 
