@@ -1,6 +1,6 @@
 {
   "name": "arrow-orm",
-  "version": "0.2.19",
+  "version": "0.2.20",
   "description": "Arrow Builder ORM",
   "main": "index.js",
   "license": "Appcelerator Commercial",
