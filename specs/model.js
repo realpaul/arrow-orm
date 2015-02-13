@@ -1436,6 +1436,225 @@ describe('models',function(){
 		});
 	});
 
+	describe('#findAndModify', function(){
+
+		it('returns an empty result if no record is found and upsert is false', function(callback){
+			var Connector = new orm.MemoryConnector();
+			var User = orm.Model.define('user',{
+				fields: {
+					name: {
+						type: String,
+						required: false
+					},
+					age: {
+						type: Number,
+						required: false
+					},
+					gender: {
+						type: String,
+						required: false
+					}
+				},
+				connector: Connector
+			});
+
+			User.create({
+				age: 21,
+				name: "George",
+				gender: "Male"
+			}, function(err/*, result*/){
+				if(err){
+					return callback(err);
+				}
+
+				User.findAndModify({
+					where: {
+						name: "Jason"
+					}
+				}, {
+					name: "Jasmine"
+				}, function(err, result){
+					if(err){
+						return callback(err);
+					}
+					true.should.eql(result === undefined);
+					callback();
+				});
+			});
+		});
+
+		it('creates a record if unfound and upsert is set', function(callback){
+			var Connector = new orm.MemoryConnector();
+			var User = orm.Model.define('user',{
+				fields: {
+					name: {
+						type: String,
+						required: false
+					},
+					age: {
+						type: Number,
+						required: false
+					},
+					gender: {
+						type: String,
+						required: false
+					}
+				},
+				connector: Connector
+			});
+
+			User.create({
+				age: 21,
+				name: "George",
+				gender: "Male"
+			}, function(err, createdRecord){
+				if(err){
+					return callback(err);
+				}
+
+				User.findAndModify({
+					where: {
+						name: "Jason"
+					}
+				}, {
+					age: 30,
+					name: "Jerry"
+				}, { upsert: true }, function(err/*, result*/){
+					if(err){
+						return callback(err);
+					}
+
+					User.findOne(createdRecord.getPrimaryKey() + 1, function(err, result){
+						if(err){
+							return callback(err);
+						}
+
+						result.should.have.property('name');
+						result.name.should.eql('Jerry');
+
+						result.should.have.property('age');
+						result.age.should.eql(30);
+
+						callback();
+					});
+				});
+			});
+		});
+
+		it('finds and updates a record returning the old record', function(callback){
+			var Connector = new orm.MemoryConnector();
+			var User = orm.Model.define('user',{
+				fields: {
+					name: {
+						type: String,
+						required: false
+					},
+					age: {
+						type: Number,
+						required: false
+					},
+					gender: {
+						type: String,
+						required: false
+					}
+				},
+				connector: Connector
+			});
+
+			User.create({
+				age: 21,
+				name: "George",
+				gender: "Male"
+			}, function(err, createdRecord){
+				if(err){
+					return callback(err);
+				}
+
+				User.findAndModify({
+					where: {
+						name: "George"
+					}
+				}, {
+					age: 30
+				}, function(err, result){
+					if(err){
+						return callback(err);
+					}
+
+					false.should.eql(result === undefined);
+
+					result.should.have.property('name');
+					result.should.have.property('age');
+					result.should.have.property('gender');
+
+					result.getPrimaryKey().should.eql(createdRecord.getPrimaryKey());
+					result.name.should.eql(createdRecord.name);
+					result.age.should.eql(createdRecord.age);
+					result.gender.should.eql(createdRecord.gender);
+
+					callback();
+				});
+			});
+		});
+
+		it('finds and updates a record returning the new record', function(callback){
+			var Connector = new orm.MemoryConnector();
+			var User = orm.Model.define('user',{
+				fields: {
+					name: {
+						type: String,
+						required: false
+					},
+					age: {
+						type: Number,
+						required: false
+					},
+					gender: {
+						type: String,
+						required: false
+					}
+				},
+				connector: Connector
+			});
+
+			User.create({
+				age: 21,
+				name: "George",
+				gender: "Male"
+			}, function(err, createdRecord){
+				if(err){
+					return callback(err);
+				}
+
+				User.findAndModify({
+					where: {
+						name: "George"
+					}
+				}, {
+					age: 30
+				}, { new: true }, function(err, result){
+					if(err){
+						return callback(err);
+					}
+
+					false.should.eql(result === undefined);
+
+					result.should.have.property('name');
+					result.should.have.property('age');
+					result.should.have.property('gender');
+
+					result.getPrimaryKey().should.eql(createdRecord.getPrimaryKey());
+					result.name.should.eql(createdRecord.name);
+					result.age.should.eql(30);
+					result.gender.should.eql(createdRecord.gender);
+
+					callback();
+				});
+			});
+		});
+
+	});
+
 	describe('#mapping', function(){
 		it('should support field renaming on serialization',function(callback){
 			var Connector = new orm.MemoryConnector();
@@ -1552,6 +1771,82 @@ describe('models',function(){
 			should(user2).have.property('id',2);
 			should(user2).have.property('name','jeff');
 			should(user2).not.have.property('email','foo@example.com');
+		});
+
+	});
+
+	describe('#distinct', function(){
+
+		it('should return distinct values', function(callback){
+			var Connector = new orm.MemoryConnector();
+
+			var User = orm.Model.define('user',{
+				fields: {
+					name: {
+						type: String,
+						required: true
+					},
+					age: {
+						type: Number,
+						required: true
+					}
+				},
+				connector: Connector
+			});
+
+			User.create({
+				name: 'Steve',
+				age: 50
+			}, function(err, user){
+				should(err).not.be.ok;
+				should(user).be.an.object;
+				should(user.name).eql('Steve');
+				should(user.age).eql(50);
+
+				User.create({
+					name: 'Steve',
+					age: 15
+				}, function(err, user){
+					should(err).not.be.ok;
+					should(user).be.an.object;
+					should(user.name).eql('Steve');
+					should(user.age).eql(15);
+
+					User.create({
+						name: 'Jack',
+						age: 50
+					}, function(err, user){
+						should(err).not.be.ok;
+						should(user).be.an.object;
+						should(user.name).eql('Jack');
+						should(user.age).eql(50);
+
+						User.distinct('name', {}, function(err, results){
+							should(err).be.not.ok;
+
+							should(results).be.an.Array.with.length(2);
+							should(results).containEql('Steve');
+							should(results).containEql('Jack');
+
+							User.distinct('age', {
+								where:{
+									name: 'Jack'
+								}
+							}, function(err, results){
+								should(err).be.not.ok;
+
+								should(results).be.an.Array.with.length(1);
+								should(results).containEql(50);
+
+								callback();
+							});
+						});
+
+					});
+
+				});
+
+			});
 		});
 
 	});
