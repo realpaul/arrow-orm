@@ -339,6 +339,113 @@ describe('connectors',function(){
 
 	});
 
+	describe("#upsert", function(){
+
+		it('should add a new record if one does not exist', function(next) {
+			var Connector = new orm.MemoryConnector();
+
+			var User = orm.Model.define('user',{
+				fields: {
+					fname: {
+						type: String,
+						required: false
+					},
+					lname: {
+						type: String,
+						required: false
+					}
+				},
+				connector: Connector
+			});
+
+			var fname = 'James',
+				lname = 'Smith';
+
+			User.upsert('my-test-id', {
+				fname: fname,
+				lname: lname
+			}, function(err, upsertedInstance){
+				should(err).not.be.ok;
+				should(upsertedInstance).not.be.ok;
+
+				User.findAll(function (err, collection) {
+					should(err).not.be.ok;
+					should(collection).be.an.Array;
+
+					should(collection.length).equal(1);
+					should(collection[0].fname).equal(fname);
+					should(collection[0].lname).equal(lname);
+					should(collection[0].getPrimaryKey()).equal('my-test-id');
+
+					next();
+				});
+			});
+		});
+
+		it('should update a record if one exists', function(next) {
+			var Connector = new orm.MemoryConnector();
+
+			var User = orm.Model.define('user',{
+				fields: {
+					fname: {
+						type: String,
+						required: false
+					},
+					lname: {
+						type: String,
+						required: false
+					}
+				},
+				connector: Connector
+			});
+
+			var fname = 'James',
+				lname = 'Smith';
+
+			User.create({
+				fname: fname,
+				lname: lname
+			}, function (err, createdInstance) {
+				should(err).not.be.ok;
+				should(createdInstance).be.an.Object;
+
+				User.findAll(function (err, collection1) {
+					should(err).not.be.ok;
+					should(collection1).be.an.Array;
+
+					should(collection1.length).equal(1);
+					should(collection1[0].fname).equal(fname);
+					should(collection1[0].lname).equal(lname);
+
+					User.upsert(createdInstance.getPrimaryKey(), {
+						fname: 'Jack',
+						lname: lname
+					}, function (err, upsertedInstance) {
+						should(err).not.be.ok;
+						should(upsertedInstance).not.be.ok;
+
+						User.findAll(function (err, collection) {
+							should(err).not.be.ok;
+							should(collection).be.an.Array;
+
+							should(collection.length).equal(1);
+							should(collection[0].fname).equal('Jack');
+							should(collection[0].lname).equal(lname);
+							should(collection[0].getPrimaryKey()).equal(createdInstance.getPrimaryKey());
+
+							next();
+						});
+
+					});
+
+				});
+
+			});
+
+		});
+
+	});
+
 	describe("#lifecycle", function(){
 
 		it("should support no lifecycle methods", function(callback){
