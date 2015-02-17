@@ -147,6 +147,7 @@ describe('collections', function () {
 			should(json).not.have.property('get');
 			should(json).not.have.property('add');
 			should(json).not.have.property('set');
+			should(json).be.eql(JSON.parse(JSON.stringify(c)));
 		});
 	});
 

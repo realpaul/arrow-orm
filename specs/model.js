@@ -581,7 +581,7 @@ describe('models',function(){
 			should(err).not.be.ok;
 			should(user).be.an.object;
 			// serialized model instances should only serialize their values
-			should(JSON.stringify(user)).be.equal(JSON.stringify({id:user.getPrimaryKey(),name:'Jeff'}));
+			should(JSON.stringify(user)).be.eql(JSON.stringify({id:user.getPrimaryKey(),name:'Jeff'}));
 			callback();
 		});
 
