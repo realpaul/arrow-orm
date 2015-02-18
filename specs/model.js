@@ -599,7 +599,7 @@ describe('models',function(){
 		// should not throw exception
 	});
 
-	it('should be able to extend models',function(){
+	it('should be able to extend models',function(done){
 
 		var Connector = new orm.MemoryConnector();
 
@@ -644,36 +644,51 @@ describe('models',function(){
 		should(RenamedAgeModel.fields.name).be.not.ok;
 
 		// test extending an extended model from another model
+		RenamedAgeModel.create({name: 'jeff'}, function(err,instance){
+			should(err).not.be.ok;
+			should(instance).be.ok;
+			should(instance instanceof orm.Instance).be.true;
 
-		var BirthdayAgeModel = AgeModel.extend(orm.Model.define('BirthdayAgeUser', {
-			fields: {
-				birthdate: {
-					type: Date
-				}
-			},
-			connector: Connector
-		}));
-		should(BirthdayAgeModel).be.an.Object;
-		should(BirthdayAgeModel.fields).have.property('name');
-		should(BirthdayAgeModel.fields).have.property('age');
-		should(BirthdayAgeModel.fields).have.property('birthdate');
+			// make sure that our name field is mapped to NewName
+			should(JSON.stringify(instance)).be.eql(JSON.stringify({id:instance.getPrimaryKey(),NewName:"jeff",NewAge:null}));
 
-		var BirthdayModel = User.extend(orm.Model.define('BirthdayUser', {
-			fields: {
-				birthdate: {
-					type: Date
-				}
-			},
-			connector: Connector
-		}));
-		should(BirthdayModel).be.an.Object;
-		should(BirthdayModel.fields).have.property('name');
-		should(BirthdayModel.fields).not.have.property('age');
-		should(BirthdayModel.fields).have.property('birthdate');
+			// make sure unselected fields are removed
+			instance = RenamedAgeModel.instance({name:'jeff'},true);
+			instance.setPrimaryKey(1);
+			should(JSON.stringify(instance)).be.eql(JSON.stringify({id:1,NewName:"jeff"}));
 
-		(function(){
-			BirthdayAgeModel.extend();
-		}).should.throw('invalid argument passed to extend. Must either be a model class or model definition');
+			var BirthdayAgeModel = AgeModel.extend(orm.Model.define('BirthdayAgeUser', {
+				fields: {
+					birthdate: {
+						type: Date
+					}
+				},
+				connector: Connector
+			}));
+			should(BirthdayAgeModel).be.an.Object;
+			should(BirthdayAgeModel.fields).have.property('name');
+			should(BirthdayAgeModel.fields).have.property('age');
+			should(BirthdayAgeModel.fields).have.property('birthdate');
+
+			var BirthdayModel = User.extend(orm.Model.define('BirthdayUser', {
+				fields: {
+					birthdate: {
+						type: Date
+					}
+				},
+				connector: Connector
+			}));
+			should(BirthdayModel).be.an.Object;
+			should(BirthdayModel.fields).have.property('name');
+			should(BirthdayModel.fields).not.have.property('age');
+			should(BirthdayModel.fields).have.property('birthdate');
+
+			(function(){
+				BirthdayAgeModel.extend();
+			}).should.throw('invalid argument passed to extend. Must either be a model class or model definition');
+
+			done();
+		});
 
 	});
 
