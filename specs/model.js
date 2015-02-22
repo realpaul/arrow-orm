@@ -1294,6 +1294,89 @@ describe('models',function(){
 			should(_instance.get('bar')).be.equal('foo');
 		});
 
+		it("should pass get function as string", function() {
+			var Connector = new orm.MemoryConnector();
+
+			var User = orm.Model.define('user', {
+				fields: {
+					name: {
+						type: String
+					},
+					bar: {
+						type: String
+					},
+					qux: {
+						type: String,
+						custom: true,
+						get: 'function(value, name, instance) { return "foo"; }'
+					}
+				},
+				connector: Connector
+			});
+
+			var model = User.instance({ name: 'foo/bar', bar: 'foo' }, true);
+			var obj = model.toJSON();
+			should(obj).have.property('qux','foo');
+			should(model.get('qux')).be.equal('foo');
+			should(User.fields.qux.get).be.a.function;
+		});
+
+		it("should pass get named function with spaces as string", function() {
+			var Connector = new orm.MemoryConnector();
+
+			var User = orm.Model.define('user', {
+				fields: {
+					name: {
+						type: String
+					},
+					bar: {
+						type: String
+					},
+					qux: {
+						type: String,
+						custom: true,
+						get: ' function getter(value, name, instance) { return "foo"; } '
+					}
+				},
+				connector: Connector
+			});
+
+			var model = User.instance({ name: 'foo/bar', bar: 'foo' }, true);
+			var obj = model.toJSON();
+			should(obj).have.property('qux','foo');
+			should(model.get('qux')).be.equal('foo');
+			// should have converted it to a function when invoked
+			should(User.fields.qux.get).be.a.function;
+		});
+
+		it("should pass set function as string", function() {
+			var Connector = new orm.MemoryConnector();
+
+			var User = orm.Model.define('user', {
+				fields: {
+					name: {
+						type: String
+					},
+					bar: {
+						type: String
+					},
+					qux: {
+						type: String,
+						custom: true,
+						set: 'function(value, name, instance) { return "foo"; }'
+					}
+				},
+				connector: Connector
+			});
+
+			var model = User.instance({ name: 'foo/bar', bar: 'foo' }, true);
+			// our custom set should override
+			model.set('qux','blah');
+			var obj = model.toJSON();
+			should(obj).have.property('qux','foo');
+			should(model.get('qux')).be.equal('foo');
+		});
+
 		it("should be able to serialize", function(){
 			var Connector = new orm.MemoryConnector();
 
