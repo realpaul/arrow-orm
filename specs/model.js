@@ -40,6 +40,7 @@ describe('models',function(){
 
 		should(orm.Model.getModels()).have.length(1);
 		should(orm.Model.getModels()[0]).equal(User);
+		should(orm.Model.getModels()[0].generated).be.false;
 	});
 
 	it('should be able to get model keys',function(){
