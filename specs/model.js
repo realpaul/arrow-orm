@@ -1349,6 +1349,33 @@ describe('models',function(){
 			should(User.fields.qux.get).be.a.function;
 		});
 
+		it("should pass get without custom property", function() {
+			var Connector = new orm.MemoryConnector();
+
+			var User = orm.Model.define('user', {
+				fields: {
+					name: {
+						type: String
+					},
+					bar: {
+						type: String
+					},
+					qux: {
+						type: String,
+						get: ' function getter(value, name, instance) { return "foo"; } '
+					}
+				},
+				connector: Connector
+			});
+
+			var model = User.instance({ name: 'foo/bar', bar: 'foo' }, true);
+			var obj = model.toJSON();
+			should(obj).not.have.property('qux','foo');
+			should(model.get('qux')).be.equal('foo');
+			// should have converted it to a function when invoked
+			should(User.fields.qux.get).be.a.function;
+		});
+
 		it("should pass set function as string", function() {
 			var Connector = new orm.MemoryConnector();
 
@@ -1364,6 +1391,33 @@ describe('models',function(){
 						type: String,
 						custom: true,
 						set: 'function(value, name, instance) { return "foo"; }'
+					}
+				},
+				connector: Connector
+			});
+
+			var model = User.instance({ name: 'foo/bar', bar: 'foo' }, true);
+			// our custom set should override
+			model.set('qux','blah');
+			var obj = model.toJSON();
+			should(obj).have.property('qux','foo');
+			should(model.get('qux')).be.equal('foo');
+		});
+
+		it("should pass get without custom property", function() {
+			var Connector = new orm.MemoryConnector();
+
+			var User = orm.Model.define('user', {
+				fields: {
+					name: {
+						type: String
+					},
+					bar: {
+						type: String
+					},
+					qux: {
+						type: String,
+						set: ' function getter(value, name, instance) { return "foo"; } '
 					}
 				},
 				connector: Connector
@@ -1501,7 +1555,7 @@ describe('models',function(){
 			var model = User.instance({name:'foo/bar'},true);
 			model.set("name", {a:"bar",b:"foo"});
 			var obj = model.get("name");
-			should(obj).be.equal("bar/foo");
+			should(obj).be.eql({a:"bar",b:"foo"});
 			var changed = model.getChangedFields();
 			should(changed).have.property('name','bar/foo');
 		});
