@@ -299,6 +299,54 @@ describe('models',function(){
 		});
 
 	});
+	
+	it('should raise exception if invalid field lengths',function(){
+
+		var Connector = new orm.MemoryConnector(),
+			MinAndMax = orm.Model.define('user', {
+				fields: { name: { type: String, minlength: 4, maxlength: 8 } },
+				connector: Connector
+			}),
+			Min = orm.Model.define('user', { fields: { name: { type: String, minlength: 4 } }, connector: Connector }),
+			Max = orm.Model.define('user', { fields: { name: { type: String, maxlength: 8 } }, connector: Connector }),
+			Length = orm.Model.define('user', { fields: { name: { type: String, length: 8 } }, connector: Connector });
+
+		function shouldSucceed(err, user) {
+			should(err).be.not.ok;
+			should(user).be.an.Object;
+		}
+
+		function shouldFail(message) {
+			return function(err, user) {
+				should(err).be.ok;
+				should(user).not.be.an.Object;
+				should(err.message).be.equal(message);
+			};
+		}
+
+		MinAndMax.create({}, shouldSucceed);
+		MinAndMax.create({ name: '' }, shouldFail('field value must be at least 4 characters long: name'));
+		MinAndMax.create({ name: '12' }, shouldFail('field value must be at least 4 characters long: name'));
+		MinAndMax.create({ name: '1234' }, shouldSucceed);
+		MinAndMax.create({ name: '123456' }, shouldSucceed);
+		MinAndMax.create({ name: '12345678' }, shouldSucceed);
+		MinAndMax.create({ name: '123456789' }, shouldFail('field value must be at most 8 characters long: name'));
+		Min.create({}, shouldSucceed);
+		Min.create({ name: '' }, shouldFail('field value must be at least 4 characters long: name'));
+		Min.create({ name: '12' }, shouldFail('field value must be at least 4 characters long: name'));
+		Min.create({ name: '1234' }, shouldSucceed);
+		Min.create({ name: '1234567890' }, shouldSucceed);
+		Length.create({}, shouldSucceed);
+		Length.create({ name: '' }, shouldFail('field value must be exactly 8 characters long: name'));
+		Length.create({ name: '1' }, shouldFail('field value must be exactly 8 characters long: name'));
+		Length.create({ name: '12345678' }, shouldSucceed);
+		Length.create({ name: '123456789' }, shouldFail('field value must be exactly 8 characters long: name'));
+		Max.create({}, shouldSucceed);
+		Max.create({ name: '' }, shouldSucceed);
+		Max.create({ name: '1234' }, shouldSucceed);
+		Max.create({ name: '12345678' }, shouldSucceed);
+		Max.create({ name: '123456789' }, shouldFail('field value must be at most 8 characters long: name'));
+	});
 
 	it('should not raise exception if not required field',function(callback){
 
