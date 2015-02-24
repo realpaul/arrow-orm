@@ -33,10 +33,13 @@ The first argument is the name of the model. The second argument is the definiti
 
 The following are Model field properties:
 
-| Name        | Description                                                   |
-|-------------|---------------------------------------------------------------|
-| type        | the column type (such as String, Number, etc)                 |
-| required    | if true, the field is required                                |
+| Name        | Description                                                        |
+|-------------|--------------------------------------------------------------------|
+| type        | the column type (such as String, Number, etc)                      |
+| required    | if true, the field is required                                     |
+| minlength   | for Strings and Arrays, the minimum length of the field            |
+| maxlength   | for Strings and Arrays, the maximum length of the field            |
+| length      | for Strings and Arrays, the precise length of the field            |
 
 
 The model has several instance methods:
