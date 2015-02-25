@@ -270,6 +270,38 @@ describe('models',function(){
 
 	});
 
+	it('should be able to validate field when using set',function(callback){
+
+		var Connector = new orm.MemoryConnector();
+
+		var User = orm.Model.define('user',{
+			fields: {
+				age: {
+					type: Number,
+					validator: function(value) {
+						if (value !== 9) {
+							return 'Number must be 9';
+						}
+					}
+				}
+			},
+			connector: Connector
+		});
+
+		User.create({age:9},function(err,user){
+			should(err).not.be.ok;
+			should(user).be.an.object;
+			should(user.age).be.equal(9);
+
+			(function(){
+				user.age = 12;
+			}).should.throw('Number must be 9');
+
+			callback();
+		});
+
+	});
+
 	it('should raise exception if missing required field',function(callback){
 
 		var Connector = new orm.MemoryConnector();
