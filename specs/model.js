@@ -2341,27 +2341,6 @@ describe('models',function(){
 
 	describe("#actions", function(){
 
-		it('should be able have default actions', function(){
-			var Connector = new orm.MemoryConnector();
-
-			var User = orm.Model.define('user',{
-				fields: {
-					name: {
-						type: String,
-						required: false
-					}
-				},
-				connector: Connector,
-				metadata: {
-					memory: {
-						foo: 'bar'
-					}
-				}
-			});
-
-			User.actions.should.eql(['create','read','update','delete','deleteAll']);
-		});
-
 		it('should be able set one action', function(){
 			var Connector = new orm.MemoryConnector();
 
@@ -2404,30 +2383,7 @@ describe('models',function(){
 				},
 				actions: 'create'
 			});
-			}).should.throw('actions must be an array with one or more of the following: create, read, update, delete, deleteAll');
-		});
-
-		it('should require a specific type of action', function(){
-			var Connector = new orm.MemoryConnector();
-
-
-			(function(){
-				var User = orm.Model.define('user',{
-					fields: {
-						name: {
-							type: String,
-							required: false
-						}
-					},
-					connector: Connector,
-					metadata: {
-						memory: {
-							foo: 'bar'
-						}
-					},
-					actions: ['foo']
-				});
-			}).should.throw('invalid action `foo` must be an array with one or more of the following: create, read, update, delete, deleteAll');
+			}).should.throw();
 		});
 
 	});
