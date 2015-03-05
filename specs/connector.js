@@ -366,7 +366,7 @@ describe('connectors',function(){
 				lname: lname
 			}, function(err, upsertedInstance){
 				should(err).not.be.ok;
-				should(upsertedInstance).not.be.ok;
+				should(upsertedInstance).be.ok;
 
 				User.findAll(function (err, collection) {
 					should(err).not.be.ok;
@@ -422,7 +422,7 @@ describe('connectors',function(){
 						lname: lname
 					}, function (err, upsertedInstance) {
 						should(err).not.be.ok;
-						should(upsertedInstance).not.be.ok;
+						should(upsertedInstance).be.ok;
 
 						User.findAll(function (err, collection) {
 							should(err).not.be.ok;
