@@ -2494,6 +2494,36 @@ describe('models',function(){
 			});
 		});
 
+		it('should support query with LIMIT (uppercase)', function (callback) {
+			var Connector = new orm.MemoryConnector();
+
+			var User = orm.Model.define('user', {
+				fields: {
+					name: {
+						type: String,
+						required: true
+					},
+					age: {
+						type: Number,
+						required: true
+					},
+					email: {
+						type: String
+					}
+				},
+				connector: Connector
+			});
+			User.create({ name: 'jeff', age: 25 });
+			User.create({ name: 'nolan', age: 55 });
+			User.create({ name: 'neeraj', age: 35 });
+			User.query({ LIMIT: 2 }, function (err, collection) {
+				should(err).not.be.ok;
+				should(collection).be.an.object;
+				should(collection.length).be.equal(2);
+				callback();
+			});
+		});
+
 		it('should support query with multiple sel fields', function(callback){
 			var Connector = new orm.MemoryConnector();
 
