@@ -1518,6 +1518,13 @@ describe('models',function(){
 				fields: {
 					name: {
 						type: String
+					},
+					calculated: {
+						type: String,
+						custom: true,
+						get: function(name,val,model) {
+							return model.get('name');
+						}
 					}
 				},
 				mappings: {
@@ -1543,6 +1550,10 @@ describe('models',function(){
 			should(obj).have.property('name');
 			should(obj.name).have.property('a','foo');
 			should(obj.name).have.property('b','bar');
+			// calculated returns the value of name field, which should
+			// be our serialized field since name has a mapping field and
+			// get will be calculated when toJSON is called to serialize the object
+			should(obj.calculated).eql(obj.name);
 
 		});
 
