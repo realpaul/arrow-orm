@@ -1450,7 +1450,7 @@ describe('models',function(){
 
 			var model = User.instance({ name: 'foo/bar', bar: 'foo' }, true);
 			var obj = model.toJSON();
-			should(obj).not.have.property('qux','foo');
+			should(obj).have.property('qux','foo');
 			should(model.get('qux')).be.equal('foo');
 			// should have converted it to a function when invoked
 			should(User.fields.qux.get).be.a.function;
@@ -1484,7 +1484,7 @@ describe('models',function(){
 			should(model.get('qux')).be.equal('foo');
 		});
 
-		it("should pass get without custom property", function() {
+		it("should pass set without custom property", function() {
 			var Connector = new orm.MemoryConnector();
 
 			var User = orm.Model.define('user', {
@@ -1550,10 +1550,8 @@ describe('models',function(){
 			should(obj).have.property('name');
 			should(obj.name).have.property('a','foo');
 			should(obj.name).have.property('b','bar');
-			// calculated returns the value of name field, which should
-			// be our serialized field since name has a mapping field and
-			// get will be calculated when toJSON is called to serialize the object
-			should(obj.calculated).eql(obj.name);
+			// should point to the original value internally, not the calculated value
+			should(obj.calculated).eql('foo/bar');
 
 		});
 
