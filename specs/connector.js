@@ -704,14 +704,18 @@ describe('connectors',function(){
 				foo = value;
 			}
 			orm.Connector.on('register',listener);
-			var MyConnector = orm.Connector.extend({});
+			var MyConnector = orm.Connector.extend({
+				name:'MyConnector'
+			});
 			var connector = new MyConnector();
 			should(foo).be.ok;
 			should(foo).equal(connector);
 			orm.Connector.removeListener('register',listener);
 			orm.Connector.removeAllListeners();
 			foo = null;
-			var MyConnector2 = orm.Connector.extend({});
+			var MyConnector2 = orm.Connector.extend({
+				name: 'MyConnector2'
+			});
 			var connector2 = new MyConnector2();
 			should(foo).be.null;
 		});
