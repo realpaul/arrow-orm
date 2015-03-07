@@ -2753,6 +2753,61 @@ describe('models',function(){
 		});
 	});
 
+	describe('#API', function() {
+		it('should create', function(){
+			var Connector = new orm.MemoryConnector();
+
+			var User = orm.Model.define('user',{
+				fields: {
+					name: {
+						type: String,
+						required: true
+					},
+					age: {
+						type: Number,
+						default: 10
+					},
+					email: {
+						type: String,
+						required: false
+					},
+					height: {
+						type: String,
+						optional: true
+					}
+				},
+				connector: Connector
+			});
+			var API = User.createAPI();
+			should(API).have.property('method','POST');
+			should(API).have.property('description','Create a user');
+			should(API).have.property('parameters');
+			should(API).have.property('action');
+			should(API.action).be.a.Function;
+			should(API.parameters).have.property('name');
+			should(API.parameters).have.property('age');
+			should(API.parameters).have.property('email');
+			should(API.parameters).have.property('height');
+			should(API.parameters.name).have.property('description','name field');
+			should(API.parameters.name).have.property('optional',false);
+			should(API.parameters.name).have.property('required',true);
+			should(API.parameters.name).have.property('type','body');
+			should(API.parameters.age).have.property('description','age field');
+			should(API.parameters.age).have.property('optional',false);
+			should(API.parameters.age).have.property('required',true);
+			should(API.parameters.age).have.property('default',10);
+			should(API.parameters.age).have.property('type','body');
+			should(API.parameters.email).have.property('description','email field');
+			should(API.parameters.email).have.property('optional',false);
+			should(API.parameters.email).have.property('required',true);
+			should(API.parameters.email).have.property('type','body');
+			should(API.parameters.height).have.property('description','height field');
+			should(API.parameters.height).have.property('optional',true);
+			should(API.parameters.height).have.property('required',false);
+			should(API.parameters.height).have.property('type','body');
+		});
+	});
+
 	describe('#count', function(){
 
 		it('should return count', function(callback) {
