@@ -27,6 +27,9 @@ describe('promise',function(){
 		var connector = new MyConnector();
 		var promise = connector.createRequest({},{});
 		should(promise.name).equal(connector.name);
+		should(promise.upsert).be.a.function;
+		should(promise.distinct).be.a.function;
+		should(promise.create).be.a.function;
 		promise.connect(function(){
 			should(connectCalled).be.true;
 			callback();
