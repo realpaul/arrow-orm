@@ -270,6 +270,32 @@ describe('models',function(){
 
 	});
 
+	it('should be able to validate field with constructor',function(callback){
+
+		var Connector = new orm.MemoryConnector();
+
+		var User = orm.Model.define('user',{
+			fields: {
+				age: {
+					type: Number,
+					validator: function(value) {
+						if (value !== 9) {
+							return 'Number must be 9';
+						}
+					}
+				}
+			},
+			connector: Connector
+		});
+
+		User.create({age:12},function(err,user){
+			should(err).be.ok;
+			should(err.message).be.equal('Number must be 9');
+			callback();
+		});
+
+	});
+
 	it('should be able to validate field when using set',function(callback){
 
 		var Connector = new orm.MemoryConnector();
@@ -3376,6 +3402,58 @@ describe('models',function(){
 				should(err).not.be.ok;
 				should(count).be.equal(2);
 				callback();
+			});
+		});
+
+		it('should use the correct data type', function(callback){
+			var Connector = new orm.MemoryConnector();
+
+			var User = orm.Model.define('user',{
+				fields: {
+					name: {
+						type: String,
+						required: true
+					},
+					age: {
+						type: Number,
+						required: true
+					},
+					cool: {
+						type: Boolean,
+						required:true
+					},
+					date: {
+						type: Date
+					}
+				},
+				connector: Connector
+			});
+
+			var date = new Date().toString();
+
+			User.create({
+				name: 'Steve',
+				age: 50,
+				cool:'true',
+				date:date
+			}, function(err, user){
+				User.query({where:{age:'50'}}, function(err,result){
+					should(err).not.be.ok;
+					should(result).be.ok;
+					should(result).be.an.Array;
+					should(result).have.length(1);
+					should(result[0]).have.property('age',50);
+					should(result[0]).have.property('date',new Date(Date.parse(date)));
+					should(result[0]).have.property('cool',true);
+					User.query({where:{cool:'true'}}, function(err,result){
+						should(err).not.be.ok;
+						should(result).be.ok;
+						should(result).be.an.Array;
+						should(result).have.length(1);
+						should(result[0]).have.property('age',50);
+						callback();
+					});
+				});
 			});
 		});
 
