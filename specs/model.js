@@ -52,6 +52,58 @@ describe('models',function(){
 		}).should.throw('model must contain at least one field');
 	});
 
+	it('should set optionality correctly',function(){
+		var Connector = new orm.MemoryConnector();
+		var User = orm.Model.define('user',{
+			fields: {
+				a1: {
+				},
+				a2: {
+					optional: true
+				},
+				a3: {
+					optional: false
+				},
+				a4: {
+					required: true
+				},
+				a5: {
+					required: false
+				},
+				a6: {
+					required: true,
+					optional: false
+				},
+				a7: {
+					// non-sensical
+					required: true,
+					optional: true
+				}
+			},
+			connector: Connector
+		});
+		should(User.fields.a1).have.property('required',false);
+		should(User.fields.a1).have.property('optional',true);
+
+		should(User.fields.a2).have.property('required',false);
+		should(User.fields.a2).have.property('optional',true);
+
+		should(User.fields.a3).have.property('required',true);
+		should(User.fields.a3).have.property('optional',false);
+
+		should(User.fields.a4).have.property('required',true);
+		should(User.fields.a4).have.property('optional',false);
+
+		should(User.fields.a5).have.property('required',false);
+		should(User.fields.a5).have.property('optional',true);
+
+		should(User.fields.a6).have.property('required',true);
+		should(User.fields.a6).have.property('optional',false);
+
+		should(User.fields.a7).have.property('required',true);
+		should(User.fields.a7).have.property('optional',false);
+	});
+
 	it('should be able to specify case insensitive data types',function(){
 		var Connector = new orm.MemoryConnector();
 		var User = orm.Model.define('user',{
@@ -2907,8 +2959,8 @@ describe('models',function(){
 			should(API.parameters.age).have.property('default',10);
 			should(API.parameters.age).have.property('type','body');
 			should(API.parameters.email).have.property('description','email field');
-			should(API.parameters.email).have.property('optional',false);
-			should(API.parameters.email).have.property('required',true);
+			should(API.parameters.email).have.property('optional',true);
+			should(API.parameters.email).have.property('required',false);
 			should(API.parameters.email).have.property('type','body');
 			should(API.parameters.height).have.property('description','height field');
 			should(API.parameters.height).have.property('optional',true);
@@ -2962,8 +3014,8 @@ describe('models',function(){
 			should(API.parameters.age).have.property('default',10);
 			should(API.parameters.age).have.property('type','body');
 			should(API.parameters.email).have.property('description','email field');
-			should(API.parameters.email).have.property('optional',false);
-			should(API.parameters.email).have.property('required',true);
+			should(API.parameters.email).have.property('optional',true);
+			should(API.parameters.email).have.property('required',false);
 			should(API.parameters.email).have.property('type','body');
 			should(API.parameters.height).have.property('description','height field');
 			should(API.parameters.height).have.property('optional',true);
@@ -3017,8 +3069,8 @@ describe('models',function(){
 			should(API.parameters.age).have.property('default',10);
 			should(API.parameters.age).have.property('type','body');
 			should(API.parameters.email).have.property('description','email field');
-			should(API.parameters.email).have.property('optional',false);
-			should(API.parameters.email).have.property('required',true);
+			should(API.parameters.email).have.property('optional',true);
+			should(API.parameters.email).have.property('required',false);
 			should(API.parameters.email).have.property('type','body');
 			should(API.parameters.height).have.property('description','height field');
 			should(API.parameters.height).have.property('optional',true);
