@@ -63,6 +63,41 @@ describe('models',function(){
 		should(User.keys()).eql(['name','age']);
 	});
 
+	it('should support aliases for getPrimaryKey()',function(callback){
+		var User = orm.Model.define('user', {
+			fields: {
+				name: { type: String, default: 'Jeff' },
+				age: { type: Number, default: 10 }
+			},
+			connector: new orm.MemoryConnector()
+		});
+		User.create(function (err, instance) {
+			should(err).be.not.ok;
+			should(instance).be.an.Object;
+			should(instance.getPrimaryKey()).be.ok;
+			instance.setPrimaryKey(11);
+			should(instance.getPrimaryKey()).be.exactly(11);
+			should(instance.primaryKey).be.exactly(11);
+			should(instance.ID).be.exactly(11);
+			should(instance.Id).be.exactly(11);
+			should(instance.id).be.exactly(11);
+			should(instance._id).be.exactly(11);
+			instance.setPrimaryKey(12);
+			should(instance.getPrimaryKey()).be.exactly(12);
+			instance.primaryKey = 13;
+			should(instance.getPrimaryKey()).be.exactly(13);
+			instance.id = 14;
+			should(instance.getPrimaryKey()).be.exactly(14);
+			instance.Id = 15;
+			should(instance.getPrimaryKey()).be.exactly(15);
+			instance.ID = 16;
+			should(instance.getPrimaryKey()).be.exactly(16);
+			instance._id = 17;
+			should(instance.getPrimaryKey()).be.exactly(17);
+			callback();
+		});
+	});
+
 	it('should be able to get instance values',function(callback){
 		var Connector = new orm.MemoryConnector();
 		var User = orm.Model.define('user',{
