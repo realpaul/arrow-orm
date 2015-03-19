@@ -43,6 +43,44 @@ describe('models',function(){
 		should(orm.Model.getModels()[0].generated).be.false;
 	});
 
+	it('should require at least one field',function(){
+		var Connector = new orm.MemoryConnector();
+		(function(){
+			var User = orm.Model.define('user',{
+				connector: Connector
+			});
+		}).should.throw('model must contain at least one field');
+	});
+
+	it('should be able to specify case insensitive data types',function(){
+		var Connector = new orm.MemoryConnector();
+		var User = orm.Model.define('user',{
+			fields: {
+				f1: {
+					type: String,
+				},
+				f2: {
+					type: 'String'
+				},
+				f3: {
+					type: 'string'
+				},
+				f4: {
+					type: 'STRING'
+				},
+				f5: {
+					type: 'StRing'
+				}
+			},
+			connector: Connector
+		});
+		should(User.fields.f1).have.property('type','string');
+		should(User.fields.f2).have.property('type','string');
+		should(User.fields.f3).have.property('type','string');
+		should(User.fields.f4).have.property('type','string');
+		should(User.fields.f5).have.property('type','string');
+	});
+
 	it('should be able to get model keys',function(){
 		var Connector = new orm.MemoryConnector();
 		var User = orm.Model.define('user',{

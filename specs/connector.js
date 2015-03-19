@@ -202,7 +202,10 @@ describe('connectors',function(){
 			});
 			var connector = new MyConnector();
 			var model = orm.Model.define('user',{
-				connector: connector
+				connector: connector,
+				fields: {
+					name: {}
+				}
 			});
 
 			function noop() { }
@@ -240,6 +243,9 @@ describe('connectors',function(){
 			});
 			var connector = new MyConnector();
 			var model = orm.Model.define('user',{
+				fields: {
+					name: {}
+				},
 				connector: connector
 			});
 
@@ -268,6 +274,9 @@ describe('connectors',function(){
 			});
 			var connector = new MyConnector();
 			var model = orm.Model.define('user', {
+				fields: {
+					name: {}
+				},
 				connector: connector
 			});
 
@@ -287,6 +296,9 @@ describe('connectors',function(){
 				}),
 				connector = new MyConnector(),
 				model = orm.Model.define('user', {
+					fields: {
+						name: {}
+					},
 					connector: connector
 				});
 
