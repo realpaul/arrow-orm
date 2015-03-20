@@ -43,15 +43,6 @@ describe('models',function(){
 		should(orm.Model.getModels()[0].generated).be.false;
 	});
 
-	it('should require at least one field',function(){
-		var Connector = new orm.MemoryConnector();
-		(function(){
-			var User = orm.Model.define('user',{
-				connector: Connector
-			});
-		}).should.throw('model must contain at least one field');
-	});
-
 	it('should set optionality correctly',function(){
 		var Connector = new orm.MemoryConnector();
 		var User = orm.Model.define('user',{
