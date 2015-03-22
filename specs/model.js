@@ -1394,6 +1394,17 @@ describe('models',function(){
 		should(instance.get('age')).be.equal(10);
 	});
 
+	it('should be able to coerce object default string',function(){
+		var User = orm.Model.define('user', {
+			fields: { age: { type: Object } },
+			connector: 'memory'
+		});
+		var instance = User.instance({ age: '' });
+		should(instance.get('age')).not.be.a.string;
+		should(instance.get('age')).be.an.object;
+		should(instance.get('age')).be.eql({});
+	});
+
 	it('should be able to coerce booleans',function(){
 		var User = orm.Model.define('user', {
 			fields: { fancy: { type: Boolean } },
