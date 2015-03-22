@@ -424,7 +424,8 @@ describe('models',function(){
 						if (value !== 9) {
 							return 'Number must be 9';
 						}
-					}
+					},
+					required:true
 				}
 			},
 			connector: Connector
@@ -439,6 +440,65 @@ describe('models',function(){
 				user.age = 12;
 			}).should.throw('Number must be 9');
 
+			callback();
+		});
+
+	});
+
+	it('should not validate if not required and undefined',function(callback){
+
+		var Connector = new orm.MemoryConnector();
+
+		var User = orm.Model.define('user',{
+			fields: {
+				age: {
+					type: Number,
+					validator: function(value) {
+						if (value !== 9) {
+							return 'Number must be 9';
+						}
+					}
+				}
+			},
+			connector: Connector
+		});
+
+		User.create({},function(err,user) {
+			should(err).not.be.ok;
+			should(user).be.an.object;
+			should(user.get('age')).be.undefined;
+
+			(function(){
+				user.age = 12;
+			}).should.throw('Number must be 9');
+
+			callback();
+		});
+
+	});
+
+	it('should validate if not required and boolean false',function(callback){
+
+		var Connector = new orm.MemoryConnector();
+
+		var User = orm.Model.define('user',{
+			fields: {
+				onoff: {
+					type: Boolean,
+					validator: function(value) {
+						if (value) {
+							return 'yes';
+						}
+					}
+				}
+			},
+			connector: Connector
+		});
+
+		User.create({onoff:false},function(err,user) {
+			should(err).not.be.ok;
+			should(user).be.an.object;
+			should(user.get('onoff')).be.false;
 			callback();
 		});
 
