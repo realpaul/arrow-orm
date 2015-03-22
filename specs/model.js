@@ -1088,7 +1088,7 @@ describe('models',function(){
 
 	});
 
-	it('should raise exception if no connector set on model and you use it',function(){
+	it('should raise exception if no connector set on model and you use it',function(done){
 
 		(function(){
 			var User = orm.Model.define('user',{
@@ -1104,8 +1104,12 @@ describe('models',function(){
 				}
 			});
 			// once you attempt to use it, should raise if not set
-			User.find({});
-		}).should.throw('missing required connector');
+			User.find({}, function(err){
+				should(err).be.ok;
+				should(err.message).be.equal('missing required connector');
+				done();
+			});
+		}).should.not.throw('missing required connector');
 
 	});
 
