@@ -260,16 +260,21 @@ describe('connectors',function(){
 			model.query({ sel: 'name,age' }, noop);
 		});
 
-		it('should translate $like', function(done) {
+		it('should translate $like', function() {
 			var MyConnector = orm.Connector.extend({
 				name: 'testing',
 				translateWhereRegex: true,
 				query: function(Model, options, callback) {
 					should(options.where).be.ok;
 					should(options.where.name).be.ok;
-					should(options.where.name.$regex).be.ok;
-					should(options.where.name.$regex).eql('^Hello.*$');
-					done();
+					if (options.where.positive) {
+						should(options.where.name.$regex).be.ok;
+						should(options.where.name.$regex).eql('^Hello.*$');
+					}
+					else {
+						should(options.where.name.$not.$regex).be.ok;
+						should(options.where.name.$not.$regex).eql('^Hello.*$');
+					}
 				}
 			});
 			var connector = new MyConnector();
@@ -282,7 +287,8 @@ describe('connectors',function(){
 
 			function noop() { }
 
-			model.query({ name: { $like: 'Hello%' } }, noop);
+			model.query({ positive: true, name: { $like: 'Hello%' } }, noop);
+			model.query({ negative: true, name: { $notLike: 'Hello%' } }, noop);
 		});
 
 		it('API-398: should handle skip: 0 properly', function() {
