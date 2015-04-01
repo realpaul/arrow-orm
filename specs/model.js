@@ -2342,8 +2342,8 @@ describe('models',function(){
 							should(err).be.not.ok;
 
 							should(results).be.an.Array.with.length(2);
-							should(results).containEql('Steve');
-							should(results).containEql('Jack');
+							should(results[0].name).eql('Steve');
+							should(results[1].name).eql('Jack');
 
 							User.distinct('age', {
 								where:{
@@ -2354,7 +2354,7 @@ describe('models',function(){
 								should(err).be.not.ok;
 
 								should(results).be.an.Array.with.length(1);
-								should(results).containEql(50);
+								should(results[0].age).eql(50);
 
 								User.distinct('age', {
 									where:{
@@ -2364,8 +2364,8 @@ describe('models',function(){
 									should(err).be.not.ok;
 
 									should(results).be.an.Array.with.length(1);
-									should(results[0].get('name')).be.eql('Jack');
-									should(results[0].get('age')).be.eql(50);
+									should(results[0].get('name')).eql('Jack');
+									should(results[0].get('age')).eql(50);
 
 									should(results[0]).have.property('name','Jack');
 									should(results[0]).have.property('age',50);
@@ -3696,8 +3696,8 @@ describe('models',function(){
 							should(err).be.not.ok;
 
 							should(results).be.an.Array.with.length(2);
-							should(results).containEql('Steve');
-							should(results).containEql('Jack');
+							should(results[0].name).eql('Steve');
+							should(results[1].name).eql('Jack');
 
 							User.count({
 								where:{ name: 'Jack' },
