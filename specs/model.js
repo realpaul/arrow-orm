@@ -933,7 +933,7 @@ describe('models',function(){
 			should(instance instanceof orm.Instance).be.true;
 
 			// make sure that our name field is mapped to NewName
-			should(JSON.stringify(instance)).be.eql(JSON.stringify({id:instance.getPrimaryKey(),NewName:"jeff",NewAge:null}));
+			should(JSON.stringify(instance)).be.eql(JSON.stringify({id:instance.getPrimaryKey(),NewName:"jeff"}));
 
 			// make sure unselected fields are removed
 			instance = RenamedAgeModel.instance({name:'jeff'},true);
@@ -1495,9 +1495,9 @@ describe('models',function(){
 		instance = User.instance({ fancy: 0 });
 		should(instance.get('fancy')).be.equal(false);
 
-		// Defaults to null when not provided or required.
+		// Defaults to undefined when not provided and not required.
 		instance = User.instance({});
-		should(instance.get('fancy')).be.equal(null);
+		should(instance.get('fancy')).be.equal(undefined);
 	});
 
 	it('should be able to get model from instance',function(){
@@ -2409,7 +2409,7 @@ describe('models',function(){
 			User.create({name:'Jeff'}, function(err,user){
 				should(err).not.be.ok;
 				var serialized = JSON.stringify(user);
-				should(serialized).equal(JSON.stringify({id:user.getPrimaryKey(),name:'Jeff',age:null}));
+				should(serialized).equal(JSON.stringify({id:user.getPrimaryKey(),name:'Jeff'}));
 				callback();
 			});
 		});
