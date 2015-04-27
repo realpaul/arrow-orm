@@ -379,6 +379,9 @@ describe('connectors',function(){
 			var fname = 'James',
 				lname = 'Smith';
 
+			//FIXME: i'm not sure this can work like this. you can't ever create a primary key
+			//like this in all datasources...  seems like we should simply pass values (which
+			//could include the primary key if connector allowed) -JGH
 			User.upsert('my-test-id', {
 				fname: fname,
 				lname: lname
