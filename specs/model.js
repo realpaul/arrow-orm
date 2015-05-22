@@ -476,6 +476,41 @@ describe('models',function(){
 		});
 
 	});
+	
+	it('should not validate if required: false explicitly set',function(callback){
+
+		var Connector = new orm.MemoryConnector();
+
+		var User = orm.Model.define('user', {
+			fields: {
+				first_name: {
+					type: String,
+					validator: function (val) {
+						if (val.length < 5) {
+							return 'first name is too short';
+						}
+					},
+					required: false
+				},
+				last_name: { type: String },
+				email: { type: String }
+			},
+			connector: Connector
+		});
+
+		User.create({},function(err,user) {
+			should(err).not.be.ok;
+			should(user).be.an.object;
+			should(user.get('first_name')).be.undefined;
+
+			(function(){
+				user.first_name = '123';
+			}).should.throw('first name is too short');
+
+			callback();
+		});
+
+	});
 
 	it('should validate if not required and boolean false',function(callback){
 
