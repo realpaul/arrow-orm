@@ -1931,7 +1931,7 @@ describe('models',function(){
 
 	});
 
-	describe('#findMany', function(){
+	describe('#findOne', function(){
 
 		it('should be able find multiple instances', function(callback){
 			var Connector = new orm.MemoryConnector();
@@ -1960,7 +1960,7 @@ describe('models',function(){
 				should(results[0].name).eql("George");
 				should(results[1].name).eql("Erin");
 
-				User.findMany([
+				User.findOne([
 					results[0].id,
 					results[1].id
 				], function (err, result) {
@@ -1999,7 +1999,7 @@ describe('models',function(){
 
 				id = result.getPrimaryKey();
 
-				User.findMany([id,100000], function (err, result) {
+				User.findOne([id,100000], function (err, result) {
 					should(err).not.be.ok;
 					should(result).be.ok;
 					should(result).be.an.Array;
@@ -2009,27 +2009,6 @@ describe('models',function(){
 
 					callback();
 				});
-			});
-
-		});
-
-		it('requires a list of ids', function(callback){
-			var Connector = new orm.MemoryConnector();
-			var User = orm.Model.define('user',{
-				fields: {
-					name: {
-						type: String,
-						required: false
-					}
-				},
-				connector: Connector
-			});
-
-			User.findMany('yo', function (err/*, result*/) {
-				should(err).be.ok;
-				should(err.message).eql('Non-Array type passed to findMany!');
-
-				callback();
 			});
 
 		});
@@ -2253,31 +2232,9 @@ describe('models',function(){
 			});
 		});
 
-		it('handles missing parameters', function(callback){
-			var Connector = new orm.MemoryConnector();
-			var User = orm.Model.define('user',{
-				fields: {
-					name: {
-						type: String,
-						required: false
-					}
-				},
-				connector: Connector
-			});
-
-			User.findMany(function (err, result) {
-				should(err).not.be.ok;
-				should(result).be.ok;
-				should(result).be.an.Array;
-				should(result).have.lengthOf(0);
-
-				callback();
-			});
-		});
-
 	});
 
-	describe('#deleteMany', function(){
+	describe('#delete', function(){
 
 		it('should be able delete multiple instances', function(callback){
 			var Connector = new orm.MemoryConnector();
@@ -2306,7 +2263,7 @@ describe('models',function(){
 				should(results[0].name).eql("George");
 				should(results[1].name).eql("Erin");
 
-				User.deleteMany([
+				User.delete([
 					results[0].id,
 					results[1].id
 				], function (err, result) {
@@ -2317,7 +2274,7 @@ describe('models',function(){
 					should(result[0].name).eql("George");
 					should(result[1].name).eql("Erin");
 
-					User.findMany([
+					User.findOne([
 						results[0].id,
 						results[1].id
 					], function (err, result) {
@@ -2357,7 +2314,7 @@ describe('models',function(){
 
 				id = result.getPrimaryKey();
 
-				User.deleteMany([id, 100000], function (err, result) {
+				User.delete([id, 100000], function (err, result) {
 					should(err).not.be.ok;
 					should(result).be.ok;
 					should(result).be.an.Array;
@@ -2369,48 +2326,6 @@ describe('models',function(){
 				});
 			});
 
-		});
-
-		it('requires a list of ids', function(callback){
-			var Connector = new orm.MemoryConnector();
-			var User = orm.Model.define('user',{
-				fields: {
-					name: {
-						type: String,
-						required: false
-					}
-				},
-				connector: Connector
-			});
-
-			User.deleteMany('yo', function (err/*, result*/) {
-				should(err).be.ok;
-				should(err.message).eql('Non-Array type passed to deleteMany!');
-
-				callback();
-			});
-		});
-
-		it('handles missing parameters', function(callback){
-			var Connector = new orm.MemoryConnector();
-			var User = orm.Model.define('user',{
-				fields: {
-					name: {
-						type: String,
-						required: false
-					}
-				},
-				connector: Connector
-			});
-
-			User.deleteMany(function (err, result) {
-				should(err).not.be.ok;
-				should(result).be.ok;
-				should(result).be.an.Array;
-				should(result).have.lengthOf(0);
-
-				callback();
-			});
 		});
 
 	});
