@@ -906,7 +906,7 @@ describe('models',function(){
 	});
 
 	it('should be able to create model without connector',function(){
-		var User = orm.Model.define('user',{
+		orm.Model.define('user',{
 			fields: {
 				name: {
 					type: String,
@@ -1928,6 +1928,112 @@ describe('models',function(){
 			]);
 			should(collection.length).be.equal(4);
 		});
+
+	});
+
+	describe('#findMany', function(){
+
+		it('should be able find multiple instances', function(callback){
+			var Connector = new orm.MemoryConnector();
+			var User = orm.Model.define('user',{
+				fields: {
+					name: {
+						type: String,
+						required: false
+					}
+				},
+				connector: Connector
+			});
+
+			User.create([
+				{
+					name: "George"
+				},
+				{
+					name: "Erin"
+				}
+			], function(err, results){
+				should(err).not.be.ok;
+				should(results).be.ok;
+
+				should(results).have.lengthOf(2);
+				should(results[0].name).eql("George");
+				should(results[1].name).eql("Erin");
+
+				User.findMany([
+					results[0].id,
+					results[1].id
+				], function (err, result) {
+					should(err).not.be.ok;
+					should(result).be.ok;
+					should(result).be.an.Array;
+					should(result).have.lengthOf(2);
+					should(result[0].name).eql("George");
+					should(result[1].name).eql("Erin");
+
+					callback();
+				});
+			});
+
+		});
+
+		it('should preserve missing instances', function(callback){
+			var Connector = new orm.MemoryConnector();
+			var User = orm.Model.define('user',{
+				fields: {
+					name: {
+						type: String,
+						required: false
+					}
+				},
+				connector: Connector
+			});
+
+			var id;
+
+			User.create({
+				name: "George"
+			}, function(err, result){
+				should(err).not.be.ok;
+				should(result).be.ok;
+
+				id = result.getPrimaryKey();
+
+				User.findMany([id,100000], function (err, result) {
+					should(err).not.be.ok;
+					should(result).be.ok;
+					should(result).be.an.Array;
+					should(result).have.lengthOf(2);
+					should(result[0].name).eql("George");
+					should(result[1]).not.be.ok;
+
+					callback();
+				});
+			});
+
+		});
+
+		it('requires a list of ids', function(callback){
+			var Connector = new orm.MemoryConnector();
+			var User = orm.Model.define('user',{
+				fields: {
+					name: {
+						type: String,
+						required: false
+					}
+				},
+				connector: Connector
+			});
+
+			User.findMany('yo', function (err/*, result*/) {
+				should(err).be.ok;
+				should(err.message).eql('Non-Array type passed to findMany!');
+
+				callback();
+			});
+
+		});
+
 	});
 
 	describe('#findAndModify', function(){
@@ -2144,6 +2250,166 @@ describe('models',function(){
 
 					callback();
 				});
+			});
+		});
+
+		it('handles missing parameters', function(callback){
+			var Connector = new orm.MemoryConnector();
+			var User = orm.Model.define('user',{
+				fields: {
+					name: {
+						type: String,
+						required: false
+					}
+				},
+				connector: Connector
+			});
+
+			User.findMany(function (err, result) {
+				should(err).not.be.ok;
+				should(result).be.ok;
+				should(result).be.an.Array;
+				should(result).have.lengthOf(0);
+
+				callback();
+			});
+		});
+
+	});
+
+	describe('#deleteMany', function(){
+
+		it('should be able delete multiple instances', function(callback){
+			var Connector = new orm.MemoryConnector();
+			var User = orm.Model.define('user',{
+				fields: {
+					name: {
+						type: String,
+						required: false
+					}
+				},
+				connector: Connector
+			});
+
+			User.create([
+				{
+					name: "George"
+				},
+				{
+					name: "Erin"
+				}
+			], function(err, results){
+				should(err).not.be.ok;
+				should(results).be.ok;
+
+				should(results).have.lengthOf(2);
+				should(results[0].name).eql("George");
+				should(results[1].name).eql("Erin");
+
+				User.deleteMany([
+					results[0].id,
+					results[1].id
+				], function (err, result) {
+					should(err).not.be.ok;
+					should(result).be.ok;
+					should(result).be.an.Array;
+					should(result).have.lengthOf(2);
+					should(result[0].name).eql("George");
+					should(result[1].name).eql("Erin");
+
+					User.findMany([
+						results[0].id,
+						results[1].id
+					], function (err, result) {
+						should(err).not.be.ok;
+						should(result).be.ok;
+						should(result).be.an.Array;
+						should(result).have.lengthOf(2);
+						should(result[0]).be.undefined;
+						should(result[1]).be.undefined;
+
+						callback();
+					});
+				});
+			});
+
+		});
+
+		it('should preserve missing instances', function(callback){
+			var Connector = new orm.MemoryConnector();
+			var User = orm.Model.define('user',{
+				fields: {
+					name: {
+						type: String,
+						required: false
+					}
+				},
+				connector: Connector
+			});
+
+			var id;
+
+			User.create({
+				name: "George"
+			}, function(err, result){
+				should(err).not.be.ok;
+				should(result).be.ok;
+
+				id = result.getPrimaryKey();
+
+				User.deleteMany([id, 100000], function (err, result) {
+					should(err).not.be.ok;
+					should(result).be.ok;
+					should(result).be.an.Array;
+					should(result).have.lengthOf(2);
+					should(result[0]).not.be.undefined;
+					should(result[1]).be.undefined;
+
+					callback();
+				});
+			});
+
+		});
+
+		it('requires a list of ids', function(callback){
+			var Connector = new orm.MemoryConnector();
+			var User = orm.Model.define('user',{
+				fields: {
+					name: {
+						type: String,
+						required: false
+					}
+				},
+				connector: Connector
+			});
+
+			User.deleteMany('yo', function (err/*, result*/) {
+				should(err).be.ok;
+				should(err.message).eql('Non-Array type passed to deleteMany!');
+
+				callback();
+			});
+		});
+
+		it('handles missing parameters', function(callback){
+			var Connector = new orm.MemoryConnector();
+			var User = orm.Model.define('user',{
+				fields: {
+					name: {
+						type: String,
+						required: false
+					}
+				},
+				connector: Connector
+			});
+
+			User.deleteMany(function (err, result) {
+				should(err).not.be.ok;
+				should(result).be.ok;
+				should(result).be.an.Array;
+				should(result).have.lengthOf(0);
+
+				callback();
 			});
 		});
 
