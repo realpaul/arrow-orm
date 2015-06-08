@@ -1,4 +1,4 @@
-# Arrow ORM [![Build Status](https://magnum.travis-ci.com/appcelerator/arrow-orm.svg?token=xjwxUDk3aUJaLhguTqyB&branch=master)](https://magnum.travis-ci.com/appcelerator/arrow-orm)
+# Arrow ORM [![Build Status](https://travis-ci.org/appcelerator/arrow-orm.svg?branch=master)](https://travis-ci.org/appcelerator/arrow-orm)
 
 Object relational mapping (ORM) framework for [Arrow](https://github.com/appcelerator/arrow).
 
